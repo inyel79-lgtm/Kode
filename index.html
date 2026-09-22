@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Scan Presensi</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .clock-container {
+            background-color: rgba(0, 0, 0, 0.6);
+            padding: 15px 30px;
+            border-radius: 50px;
+            margin-bottom: 25px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        #digitalClock {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #00ffcc;
+            text-shadow: 0 0 10px #00ffcc;
+            margin: 0;
+            font-family: 'Courier New', Courier, monospace;
+        }
+        #digitalDate {
+            font-size: 1rem;
+            color: #ffcc00;
+            text-shadow: 0 0 5px #ffcc00;
+            margin: 5px 0 0 0;
+            font-weight: 600;
+        }
+
+        .container {
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+            box-sizing: border-box;
+        }
+        h2 {
+            color: #333333;
+            margin-bottom: 20px;
+        }
+        .btn {
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            color: white;
+            border: none;
+            padding: 14px 24px;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            width: 100%;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0, 123, 255, 0.4);
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 123, 255, 0.6);
+        }
+        .btn:active {
+            transform: translateY(0);
+        }
+        .btn:disabled {
+            background: #cccccc;
+            box-shadow: none;
+            cursor: not-allowed;
+            transform: none;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            display: none;
+            text-align: left;
+            font-size: 14px;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .loading {
+            color: #666;
+            font-style: italic;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="clock-container">
+    <div id="digitalClock">00:00:00</div>
+    <div id="digitalDate">Hari, 00 Bulan 0000</div>
+</div>
+
+<div class="container">
+    <h2>Sistem Scan Presensi</h2>
+    <p>Klik tombol di bawah untuk mengirim data scan presensi ke server.</p>
+    
+    <button id="scanBtn" class="btn" onclick="sendScanRequest()">Kirim Scan Presensi</button>
+    
+    <div id="loadingText" class="loading" style="display: none;">Memproses data presensi...</div>
+    <div id="result"></div>
+</div>
+
+<script>
+    function updateClock() {
+        const now = new Date();
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const seconds = String(now.getSeconds()).padStart(2, '0');
+        document.getElementById('digitalClock').textContent = `${hours}:${minutes}:${seconds}`;
+        
+        const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+        const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+        
+        const dayName = days[now.getDay()];
+        const dayNum = now.getDate();
+        const monthName = months[now.getMonth()];
+        const year = now.getFullYear();
+        
+        document.getElementById('digitalDate').textContent = `${dayName}, ${dayNum} ${monthName} ${year}`;
+    }
+    
+    updateClock();
+    setInterval(updateClock, 1000);
+
+    async function sendScanRequest() {
+        const url = 'https://api-absen.baritotimurkab.go.id/public/api/scan/31';
+        const btn = document.getElementById('scanBtn');
+        const resultDiv = document.getElementById('result');
+        const loadingText = document.getElementById('loadingText');
+
+        btn.disabled = true;
+        loadingText.style.display = 'block';
+        resultDiv.style.display = 'none';
+        resultDiv.className = '';
+
+        try {
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            const data = await response.json();
+
+            loadingText.style.display = 'none';
+            resultDiv.style.display = 'block';
+
+            if (response.ok) {
+                resultDiv.classList.add('success');
+                resultDiv.innerHTML = `<strong>Berhasil!</strong><br><br>` + JSON.stringify(data, null, 2);
+            } else {
+                resultDiv.classList.add('error');
+                resultDiv.innerHTML = `<strong>Gagal (Status: ${response.status})</strong><br><br>` + JSON.stringify(data, null, 2);
+            }
+        } catch (error) {
+            loadingText.style.display = 'none';
+            resultDiv.style.display = 'block';
+            resultDiv.classList.add('error');
+            resultDiv.innerHTML = `<strong>Terjadi Kesalahan Jaringan:</strong><br><br>\${error.message}`;
+            console.error('Error:', error);
+        } finally {
+            btn.disabled = false;
+        }
+    }
+</script>
+
+</body>
+</html>
