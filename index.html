@@ -151,7 +151,7 @@
 
         <div class="section-title">Data Pengenal Dokumen</div>
         <div class="info-box">
-            <div class="label">Sistem Operasi Dasar</div>
+            <div class="label">Sistem Operasi / Versi</div>
             <div class="value" id="os-dasar">Mendeteksi...</div>
         </div>
 
@@ -168,13 +168,16 @@
                 var modelStr = "Windows / Mac PC";
                 var osStr = "Windows OS";
 
-                // 1. Logika Deteksi jika pengguna menggunakan HP / Tablet
+                // 1. Deteksi Sistem Dasar & Pencarian Versi Android dari User-Agent lama
                 if (/Android/i.test(ua)) {
                     tipeStr = "Smartphone / HP";
                     badgeStr = "ANDROID";
                     badgeWarna = "#06d6a0";
-                    osStr = "Android OS";
-                    modelStr = "Perangkat Android Umum";
+                    
+                    // Ekstraksi versi Android cadangan jika terdeteksi di teks UA
+                    var matchVersi = ua.match(/Android\s([0-9\.]+)/);
+                    osStr = matchVersi ? "Android " + matchVersi[1] : "Android OS";
+                    modelStr = "Perangkat Android";
                     
                     var matchModel = ua.match(/Linux; Android[^;]+;\s([^)]+)/);
                     if (matchModel && matchModel[1]) {
@@ -185,15 +188,24 @@
                     tipeStr = "Mobile / Tablet";
                     badgeStr = "APPLE iOS";
                     badgeWarna = "#ffd166";
-                    osStr = "iOS System";
+                    
+                    var matchiOS = ua.match(/OS\s([0-9_]+)/);
+                    var versiIOS = matchiOS ? matchiOS[1].replace(/_/g, '.') : "";
+                    osStr = "iOS " + versiIOS;
                     modelStr = /iPhone/i.test(ua) ? "iPhone" : "iPad";
-                } 
-                // 2. Logika Deteksi jika pengguna menggunakan Komputer / Laptop PC
-                else if (/Windows NT/i.test(ua)) {
+                } else if (/Windows NT/i.test(ua)) {
                     tipeStr = "Desktop PC / Laptop";
                     badgeStr = "WINDOWS";
                     badgeWarna = "#0078d4";
-                    osStr = "Windows OS";
+                    
+                    var matchWin = ua.match(/Windows NT\s([0-9\.]+)/);
+                    var winVer = "OS";
+                    if(matchWin) {
+                        if(matchWin[1] === "10.0") winVer = "10 / 11";
+                        else if(matchWin[1] === "6.3") winVer = "8.1";
+                        else if(matchWin[1] === "6.1") winVer = "7";
+                    }
+                    osStr = "Windows " + winVer;
                     modelStr = "Personal Computer (PC)";
                 } else if (/Macintosh/i.test(ua)) {
                     tipeStr = "Desktop PC / Laptop";
@@ -201,15 +213,9 @@
                     badgeWarna = "#ffffff";
                     osStr = "Apple macOS";
                     modelStr = "Apple Mac Device";
-                } else if (/Linux/i.test(ua)) {
-                    tipeStr = "Desktop PC / Laptop";
-                    badgeStr = "LINUX";
-                    badgeWarna = "#f4a261";
-                    osStr = "Linux OS";
-                    modelStr = "Linux Workstation";
                 }
 
-                // 3. Masukkan data teks ke elemen HTML
+                // 2. Tampilkan data awal ke HTML
                 document.getElementById("tipe-sistem").innerHTML = tipeStr + ' <span class="badge" id="badge-tipe">' + badgeStr + '</span>';
                 document.getElementById("badge-tipe").style.backgroundColor = badgeWarna;
                 if(badgeWarna === "#ffffff") { document.getElementById("badge-tipe").style.color = "#000"; }
@@ -217,38 +223,27 @@
                 document.getElementById("model-sistem").innerHTML = modelStr;
                 document.getElementById("os-dasar").innerHTML = osStr;
 
-                // 4. Hitung Resolusi Monitor / Layar Asli (Otomatis menyesuaikan ukuran monitor PC atau HP)
+                // 3. Hitung Resolusi & Orientasi Layar
                 var lebarFisik = Math.round(window.screen.width * (window.devicePixelRatio || 1));
                 var tinggiFisik = Math.round(window.screen.height * (window.devicePixelRatio || 1));
                 document.getElementById("resolusi-sistem").innerHTML = lebarFisik + " x " + tinggiFisik + " Pixels";
+                document.getElementById("orientasi-sistem").innerHTML = window.screen.width > window.screen.height ? "Landscape (Monitor)" : "Portrait (Smartphone)";
 
-                // 5. Hitung Orientasi Layar Otomatis
-                var orientasiStr = window.screen.width > window.screen.height ? "Landscape (Monitor)" : "Portrait (Smartphone)";
-                document.getElementById("orientasi-sistem").innerHTML = orientasiStr;
-
-                // 6. Cek Tambahan khusus Chrome PC modern agar model PC lebih akurat
+                // 4. TEKNOLOGI MODERN JALUR UTAMA: Memaksa pembacaan Versi Android asli & Model Asli
                 if (navigator.userAgentData && navigator.userAgentData.getHighEntropyValues) {
-                    navigator.userAgentData.getHighEntropyValues(["model"])
+                    navigator.userAgentData.getHighEntropyValues(["model", "platformVersion"])
                         .then(function(hints) {
                             if (hints.model && hints.model !== "" && hints.model !== "K") {
                                 document.getElementById("model-sistem").innerHTML = hints.model;
+                            }
+                            if (hints.platformVersion) {
+                                var versiUtama = hints.platformVersion.split(".")[0];
+                                // Jika terdeteksi sistem Android, perbarui teks versi secara akurat
+                                if (/Android/i.test(ua) || badgeStr === "ANDROID") {
+                                    document.getElementById("os-dasar").innerHTML = "Android " + versiUtama;
+                                }
                             }
                         }).catch(function(){});
                 }
 
             } catch (error) {
-                // Jika browser memblokir beberapa skrip, paksa isi data minimal agar tidak macet
-                document.getElementById("tipe-sistem").innerHTML = "Sistem Aktif <span class='badge'>WEB</span>";
-                document.getElementById("model-sistem").innerHTML = "Perangkat Web Standard";
-                document.getElementById("resolusi-sistem").innerHTML = window.screen.width + " x " + window.screen.height + " px";
-                document.getElementById("orientasi-sistem").innerHTML = "Mendeteksi...";
-                document.getElementById("os-dasar").innerHTML = "Web Browser";
-            }
-        }
-
-        // Jalankan pemindaian otomatis begitu file selesai dibuka
-        window.addEventListener('DOMContentLoaded', jalankanDeteksiOtomatis);
-    </script>
-
-</body>
-</html>
