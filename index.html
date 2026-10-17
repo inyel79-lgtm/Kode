@@ -12,6 +12,9 @@
             padding: 20px;
             display: flex;
             justify-content: center;
+            align-items: center;
+            min-height: 90vh;
+            margin: 0;
         }
         .card {
             background-color: #1c2541;
@@ -36,6 +39,67 @@
         }
         .kiri { color: #a5a5a5; font-style: italic; }
         .kanan { font-weight: bold; color: #4ea8de; text-align: right; }
+        
+        /* DESAIN GRUP TOMBOL BARU */
+        .btn-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 20px;
+            border-top: 1px dashed #3a506b;
+            padding-top: 15px;
+        }
+        .btn {
+            font-size: 0.9rem;
+            font-weight: bold;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+        /* Tombol Utama (Salin) */
+        .btn-primary {
+            background-color: #4ea8de;
+            color: #0b132b;
+        }
+        .btn-primary:hover {
+            background-color: #64dfdf;
+            box-shadow: 0 0 10px rgba(100, 223, 223, 0.4);
+        }
+        /* Tombol Sekunder (Kirim) */
+        .btn-secondary {
+            background-color: transparent;
+            color: #64dfdf;
+            border: 1px solid #64dfdf;
+        }
+        .btn-secondary:hover {
+            background-color: rgba(100, 223, 223, 0.1);
+        }
+        /* Tombol Refresh */
+        .btn-refresh {
+            background-color: #3a506b;
+            color: #ffffff;
+        }
+        .btn-refresh:hover {
+            background-color: #5c7494;
+        }
+        /* Notifikasi Sukses Kecil */
+        .toast {
+            background-color: #06d6a0;
+            color: #0b132b;
+            text-align: center;
+            padding: 8px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            margin-top: 10px;
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -63,6 +127,15 @@
             <span class="kiri">Data Mentah Browser</span>
             <span class="kanan" id="mentah" style="font-size:0.75rem; font-weight:normal; word-break:break-all; color:#8ecae6;">Memuat...</span>
         </div>
+
+        <!-- FITUR TOMBOL INTERAKTIF -->
+        <div class="btn-container">
+            <button class="btn btn-primary" onclick="salinInfo()">📋 Salin Info Perangkat</button>
+            <button class="btn btn-secondary" onclick="kirimData()">🚀 Kirim Data Ke Server</button>
+            <button class="btn btn-refresh" onclick="location.reload()">🔄 Segarkan Halaman</button>
+        </div>
+        
+        <div id="notif-toast" class="toast">Berhasil disalin ke papan klip!</div>
     </div>
 
     <script>
@@ -71,7 +144,6 @@
             var osInfo = "Bukan Android";
             var modelInfo = "Mencari model...";
 
-            // 1. Deteksi OS Dasar
             if (ua.indexOf("Android") !== -1) {
                 osInfo = "Android";
                 var matchVersi = ua.match(/Android\s([0-9\.]+)/);
@@ -84,23 +156,19 @@
                 modelInfo = "iPhone";
             }
 
-            // Tampilkan data dasar terlebih dahulu
             document.getElementById("os").innerHTML = osInfo;
             document.getElementById("model").innerHTML = modelInfo;
             document.getElementById("layar").innerHTML = Math.round(window.screen.width * window.devicePixelRatio) + " x " + Math.round(window.screen.height * window.devicePixelRatio) + " px";
             document.getElementById("orientasi").innerHTML = window.screen.width > window.screen.height ? "Landscape" : "Portrait";
             document.getElementById("mentah").innerHTML = ua;
 
-            // 2. TEKNOLOGI MODERN: Menjebol kode "K" untuk mengambil Model HP Asli
             if (navigator.userAgentData && navigator.userAgentData.getHighEntropyValues) {
                 navigator.userAgentData.getHighEntropyValues(["model", "platformVersion"])
                     .then(function(hints) {
                         if (hints.model) {
-                            // Menampilkan model spesifik HP Anda (Misal: POCO M4 Pro / Xiaomi 2201117PG)
                             document.getElementById("model").innerHTML = hints.model;
                         }
                         if (hints.platformVersion && osInfo.indexOf("Android") !== -1) {
-                            // Mengambil versi Android yang lebih akurat jika mendeteksi sistem internal
                             var versiUtama = hints.platformVersion.split(".")[0];
                             if(parseInt(versiUtama) >= 10) {
                                 document.getElementById("os").innerHTML = "Android " + versiUtama;
@@ -108,7 +176,6 @@
                         }
                     })
                     .catch(function(err) {
-                        // Jika diblokir oleh setelan browser, tampilkan inisial tanda kurung UA
                         ekstrakAlternatif(ua);
                     });
             } else {
@@ -125,6 +192,33 @@
 
         } catch (error) {
             alert("Terjadi masalah: " + error.message);
+        }
+
+        // FUNGSI JAVASCRIPT UNTUK TOMBOL SALIN
+        function salinInfo() {
+            var txtOs = document.getElementById("os").innerText;
+            var txtModel = document.getElementById("model").innerText;
+            var txtLayar = document.getElementById("layar").innerText;
+            var txtOrientasi = document.getElementById("orientasi").innerText;
+
+            var teksLengkap = "--- INFO PERANGKAT ---\n" +
+                              "OS: " + txtOs + "\n" +
+                              "Model: " + txtModel + "\n" +
+                              "Resolusi: " + txtLayar + "\n" +
+                              "Orientasi: " + txtOrientasi;
+
+            navigator.clipboard.writeText(teksLengkap).then(function() {
+                var toast = document.getElementById("notif-toast");
+                toast.style.display = "block";
+                setTimeout(function() {
+                    toast.style.display = "none";
+                }, 2500);
+            });
+        }
+
+        // FUNGSI JAVASCRIPT UNTUK SIMULASI TOMBOL KIRIM
+        function kirimData() {
+            alert("Simulasi Berhasil! Data perangkat Anda (" + document.getElementById("model").innerText + ") siap dikirimkan ke database.");
         }
     </script>
 
