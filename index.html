@@ -3,204 +3,180 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Scan Presensi</title>
+    <title>Tentang Perangkat & Baterai</title>
+    <!-- Memanggil library pendeteksi device lewat CDN -->
+    <script src="https://cloudflare.com"></script>
+    
     <style>
         body {
+            background-color: #050b14;
+            color: #ffffff;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
-            background-size: 400% 400%;
-            animation: gradientBG 15s ease infinite;
-            margin: 0;
-            padding: 20px;
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            box-sizing: border-box;
-        }
-
-        @keyframes gradientBG {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        .clock-container {
-            background-color: rgba(0, 0, 0, 0.6);
-            padding: 15px 30px;
-            border-radius: 50px;
-            margin-bottom: 25px;
-            text-align: center;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        #digitalClock {
-            font-size: 2.5rem;
-            font-weight: bold;
-            color: #00ffcc;
-            text-shadow: 0 0 10px #00ffcc;
             margin: 0;
-            font-family: 'Courier New', Courier, monospace;
-        }
-        #digitalDate {
-            font-size: 1rem;
-            color: #ffcc00;
-            text-shadow: 0 0 5px #ffcc00;
-            margin: 5px 0 0 0;
-            font-weight: 600;
-        }
-
-        .container {
-            background-color: rgba(255, 255, 255, 0.95);
-            padding: 30px;
-            border-radius: 16px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-            max-width: 500px;
-            width: 100%;
-            text-align: center;
+            padding: 20px;
             box-sizing: border-box;
         }
-        h2 {
-            color: #333333;
-            margin-bottom: 20px;
-        }
-        .btn {
-            background: linear-gradient(135deg, #007bff, #0056b3);
-            color: white;
-            border: none;
-            padding: 14px 24px;
-            font-size: 16px;
+
+        .box-perangkat {
+            background-color: #0c1524;
+            border: 1px solid #1a293d;
             border-radius: 8px;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
             width: 100%;
+            max-width: 600px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+
+        .header {
+            color: #4da6ff;
             font-weight: bold;
-            box-shadow: 0 4px 15px rgba(0, 123, 255, 0.4);
+            text-transform: uppercase;
+            font-size: 16px;
+            margin-bottom: 25px;
+            letter-spacing: 1px;
+            display: flex;
+            justify-content: space-between;
         }
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 123, 255, 0.6);
-        }
-        .btn:active {
-            transform: translateY(0);
-        }
-        .btn:disabled {
-            background: #cccccc;
-            box-shadow: none;
-            cursor: not-allowed;
-            transform: none;
-        }
-        #result {
-            margin-top: 20px;
-            padding: 15px;
-            border-radius: 8px;
-            display: none;
-            text-align: left;
+
+        .baris {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
             font-size: 14px;
-            white-space: pre-wrap;
-            word-break: break-all;
         }
-        .success {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-        .error {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-        .loading {
-            color: #666;
+
+        .label {
+            color: #a0aec0;
             font-style: italic;
-            margin-top: 15px;
+        }
+
+        .nilai {
+            font-weight: bold;
+            text-align: right;
+        }
+
+        .warna-biru {
+            color: #38bdf8;
+        }
+
+        .warna-hijau {
+            color: #10b981;
+        }
+
+        .badge-hp {
+            background-color: #059669;
+            color: #ffffff;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-right: 8px;
+            font-style: normal;
         }
     </style>
 </head>
 <body>
 
-<div class="clock-container">
-    <div id="digitalClock">00:00:00</div>
-    <div id="digitalDate">Hari, 00 Bulan 0000</div>
-</div>
+    <div class="box-perangkat">
+        <div class="header">
+            <span>📱 TENTANG PERANGKAT</span>
+            <span>▲</span>
+        </div>
 
-<div class="container">
-    <h2>Sistem Scan Presensi</h2>
-    <p>Klik tombol di bawah untuk mengirim data scan presensi ke server.</p>
-    
-    <button id="scanBtn" class="btn" onclick="sendScanRequest()">Kirim Scan Presensi</button>
-    
-    <div id="loadingText" class="loading" style="display: none;">Memproses data presensi...</div>
-    <div id="result"></div>
-</div>
+        <div class="baris">
+            <span class="label">Tipe Perangkat</span>
+            <span class="nilai"><span class="badge-hp">📱 HP</span> <span id="tipe">Memuat...</span></span>
+        </div>
 
-<script>
-    function updateClock() {
-        const now = new Date();
-        const hours = String(now.getHours()).padStart(2, '0');
-        const minutes = String(now.getMinutes()).padStart(2, '0');
-        const seconds = String(now.getSeconds()).padStart(2, '0');
-        document.getElementById('digitalClock').textContent = `${hours}:${minutes}:${seconds}`;
-        
-        const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
-        const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
-        
-        const dayName = days[now.getDay()];
-        const dayNum = now.getDate();
-        const monthName = months[now.getMonth()];
-        const year = now.getFullYear();
-        
-        document.getElementById('digitalDate').textContent = `${dayName}, ${dayNum} ${monthName} ${year}`;
-    }
-    
-    updateClock();
-    setInterval(updateClock, 1000);
+        <div class="baris">
+            <span class="label">Model Perangkat</span>
+            <span class="nilai" id="model" style="text-transform: uppercase;">Memuat...</span>
+        </div>
 
-    async function sendScanRequest() {
-        const url = 'https://api-absen.baritotimurkab.go.id/public/api/user/31';
-        const btn = document.getElementById('scanBtn');
-        const resultDiv = document.getElementById('result');
-        const loadingText = document.getElementById('loadingText');
+        <div class="baris">
+            <span class="label">Versi Sistem Android</span>
+            <span class="nilai warna-biru" id="os">Memuat...</span>
+        </div>
 
-        btn.disabled = true;
-        loadingText.style.display = 'block';
-        resultDiv.style.display = 'none';
-        resultDiv.className = '';
+        <div class="baris">
+            <span class="label">Resolusi Layar HP</span>
+            <span class="nilai warna-biru" id="resolusi">Memuat...</span>
+        </div>
 
-        try {
-            const response = await fetch(url, {
-                method: 'GET',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
+        <div class="baris">
+            <span class="label">Status Baterai</span>
+            <span class="nilai warna-hijau" id="baterai">Memuat API Baterai...</span>
+        </div>
+
+        <div class="baris">
+            <span class="label">Mode Orientasi Default</span>
+            <span class="nilai warna-biru" id="orientasi">Memuat...</span>
+        </div>
+    </div>
+
+    <script>
+        // 1. PROSES DETEKSI PERANGKAT (UA-Parser)
+        const parser = new UAParser();
+        const info = parser.getResult();
+
+        const tipePerangkat = info.device.type === 'mobile' ? 'Smartphone / HP' : (info.device.type === 'tablet' ? 'Tablet' : 'Desktop / PC');
+        document.getElementById('tipe').innerText = tipePerangkat;
+
+        const vendor = info.device.vendor ? info.device.vendor : '';
+        const model = info.device.model ? info.device.model : 'Tidak Diketahui';
+        document.getElementById('model').innerText = `${vendor} ${model}`.trim();
+
+        const namaOS = info.os.name ? info.os.name : 'Unknown OS';
+        const versiOS = info.os.version ? info.os.version : '';
+        document.getElementById('os').innerText = `${namaOS} ${versiOS}`;
+
+
+        // 2. PROSES DETEKSI RESOLUSI LAYAR
+        // Mengambil lebar asli (screen.width) x tinggi asli (screen.height) dikali rasio pixel perangkat
+        const lebarAsli = screen.width * window.devicePixelRatio;
+        const tinggiAsli = screen.height * window.devicePixelRatio;
+        document.getElementById('resolusi').innerText = `${lebarAsli} x ${tinggiAsli} Pixel`;
+
+
+        // 3. PROSES DETEKSI BATERAI (Menggunakan Battery Status API bawaan Browser)
+        if ('getBattery' in navigator) {
+            navigator.getBattery().then(function(battery) {
+                // Fungsi update tampilan data baterai
+                function updateInfoBaterai() {
+                    const levelBaterai = Math.round(battery.level * 100);
+                    const sedangDicharge = battery.charging ? "⚡ Sedang Di-charger" : "🔋 Tidak Di-charger";
+                    
+                    document.getElementById('baterai').innerText = `${levelBaterai}% (${sedangDicharge})`;
                 }
+
+                // Jalankan saat pertama kali dibuka
+                updateInfoBaterai();
+
+                // Deteksi otomatis jika kabel charger dicolok/dicabut atau persentase berubah
+                battery.addEventListener('chargingchange', updateInfoBaterai);
+                battery.addEventListener('levelchange', updateInfoBaterai);
             });
-
-            const data = await response.json();
-
-            loadingText.style.display = 'none';
-            resultDiv.style.display = 'block';
-
-            if (response.ok) {
-                resultDiv.classList.add('success');
-                resultDiv.innerHTML = `<strong>Berhasil!</strong><br><br>` + JSON.stringify(data, null, 2);
-            } else {
-                resultDiv.classList.add('error');
-                resultDiv.innerHTML = `<strong>Gagal (Status: ${response.status})</strong><br><br>` + JSON.stringify(data, null, 2);
-            }
-        } catch (error) {
-            loadingText.style.display = 'none';
-            resultDiv.style.display = 'block';
-            resultDiv.classList.add('error');
-            resultDiv.innerHTML = `<strong>Terjadi Kesalahan Jaringan:</strong><br><br>\${error.message}`;
-            console.error('Error:', error);
-        } finally {
-            btn.disabled = false;
+        } else {
+            document.getElementById('baterai').innerText = "Tidak didukung oleh browser ini";
         }
-    }
-</script>
+
+
+        // 4. DETEKSI ORIENTASI LAYAR
+        function cekOrientasi() {
+            if (window.innerHeight > window.innerWidth) {
+                document.getElementById('orientasi').innerText = "Portrait (Smartphone)";
+            } else {
+                document.getElementById('orientasi').innerText = "Landscape (Desktop/Tablet)";
+            }
+        }
+        cekOrientasi();
+        window.addEventListener('resize', cekOrientasi); // Otomatis berubah saat HP dimiringkan
+    </script>
 
 </body>
 </html>
