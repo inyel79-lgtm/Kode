@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tentang Perangkat</title>
+    <title>Tentang Perangkat - Informasi Lengkap</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -13,7 +13,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 90vh;
+            min-height: 95vh;
         }
         .card {
             background-color: #1c2541;
@@ -21,7 +21,7 @@
             border-radius: 12px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.3);
             width: 100%;
-            max-width: 500px;
+            max-width: 550px;
         }
         .header-box {
             display: flex;
@@ -29,7 +29,7 @@
             align-items: center;
             border-bottom: 2px solid #3a506b;
             padding-bottom: 10px;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
         h2 {
             color: #4ea8de;
@@ -41,16 +41,21 @@
             align-items: center;
             gap: 8px;
         }
-        .arrow-up {
-            color: #4ea8de;
+        .section-title {
             font-size: 0.8rem;
+            color: #64dfdf;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 15px 0 8px 0;
+            padding-bottom: 3px;
+            border-bottom: 1px dashed #3a506b;
         }
         .info-row {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            font-size: 0.95rem;
+            align-items: flex-start;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
         }
         .label {
             color: #a5a5a5;
@@ -59,114 +64,181 @@
         .value {
             font-weight: bold;
             text-align: right;
+            max-width: 60%;
+            word-break: break-word;
         }
         .badge {
             background-color: #06d6a0;
             color: #0b132b;
-            padding: 2px 8px;
+            padding: 2px 6px;
             border-radius: 4px;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             font-weight: bold;
-            margin-right: 8px;
+            margin-right: 6px;
             font-style: normal;
         }
         .highlight-blue { color: #4ea8de; }
         .highlight-green { color: #06d6a0; }
+        .highlight-yellow { color: #ffd166; }
     </style>
 </head>
 <body>
 
     <div class="card">
         <div class="header-box">
-            <h2>📱 TENTANG PERANGKAT</h2>
-            <span class="arrow-up">▲</span>
+            <h2>📱 TENTANG PERANGKAT (FULL)</h2>
+            <span style="color: #4ea8de; font-size: 0.8rem;">▲</span>
         </div>
         
+        <!-- BAGIAN 1: IDENTITAS & SOFTWARE -->
+        <div class="section-title">Identitas & Sistem</div>
         <div class="info-row">
             <span class="label">Tipe Perangkat</span>
             <span class="value"><span class="badge">📳 HP</span><span id="tipe-perangkat">Smartphone / HP</span></span>
         </div>
-
+        <div class="info-row">
+            <span class="label">ID Unik Perangkat (Web UUID)</span>
+            <span class="value highlight-yellow" id="device-uuid">Mencari...</span>
+        </div>
         <div class="info-row">
             <span class="label">Model Perangkat</span>
             <span class="value" id="model-perangkat" style="text-transform: uppercase;">Mencari...</span>
         </div>
-
         <div class="info-row">
-            <span class="label">Versi Sistem Android</span>
+            <span class="label">Versi Sistem Android / OS</span>
             <span class="value highlight-blue" id="os-versi">Mencari...</span>
         </div>
 
+        <!-- BAGIAN 2: SPESIFIKASI LAYAR -->
+        <div class="section-title">Tampilan & Layar</div>
         <div class="info-row">
             <span class="label">Resolusi Layar HP</span>
             <span class="value highlight-blue" id="layar-resolusi">Mencari...</span>
         </div>
-
-        <div class="info-row">
-            <span class="label">Status Baterai</span>
-            <span class="value highlight-green" id="status-baterai">Mencari...</span>
-        </div>
-
         <div class="info-row">
             <span class="label">Mode Orientasi Default</span>
             <span class="value highlight-blue" id="orientasi-layar">Mencari...</span>
         </div>
+        <div class="info-row">
+            <span class="label">Kerapatan Pixel (Device Pixel Ratio)</span>
+            <span class="value" id="pixel-ratio">Mencari...</span>
+        </div>
+
+        <!-- BAGIAN 3: SPESIFIKASI PERANGKAT KERAS (HARDWARE) -->
+        <div class="section-title">Spesifikasi Hardware</div>
+        <div class="info-row">
+            <span class="label">Jumlah Core CPU / Processor</span>
+            <span class="value" id="cpu-cores">Mencari...</span>
+        </div>
+        <div class="info-row">
+            <span class="label">Estimasi Kapasitas RAM</span>
+            <span class="value" id="ram-capacity">Mencari...</span>
+        </div>
+        <div class="info-row">
+            <span class="label">GPU Vendor (Grafis)</span>
+            <span class="value" id="gpu-vendor">Mencari...</span>
+        </div>
+        <div class="info-row">
+            <span class="label">GPU Renderer (Model Chip Grafis)</span>
+            <span class="value highlight-blue" id="gpu-renderer">Mencari...</span>
+        </div>
+
+        <!-- BAGIAN 4: LINGKUNGAN & KONEKSI -->
+        <div class="section-title">Status & Koneksi</div>
+        <div class="info-row">
+            <span class="label">Status Baterai</span>
+            <span class="value highlight-green" id="status-baterai">Mencari...</span>
+        </div>
+        <div class="info-row">
+            <span class="label">Tipe Koneksi Jaringan</span>
+            <span class="value" id="network-type">Mencari...</span>
+        </div>
+        <div class="info-row">
+            <span class="label">Bahasa Sistem</span>
+            <span class="value" id="sys-language">Mencari...</span>
+        </div>
     </div>
 
     <script>
-        function dapatkanInfoPerangkat() {
-            const ua = navigator.userAgent;
-            let os = "Bukan Android";
-            let model = "Desktop / PC";
+        // 1. Fungsi Membuat ID Unik Permanen di Browser
+        function getOrCreateUUID() {
+            let uuid = localStorage.getItem('device_system_uuid');
+            if (!uuid) {
+                uuid = 'dev-' + 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                    const r = Math.random() * 16 | 0;
+                    const v = c === 'x' ? r : (r & 0x3 | 0x8);
+                    return v.toString(16);
+                });
+                localStorage.setItem('device_system_uuid', uuid);
+            }
+            return uuid;
+        }
 
-            // 1. Deteksi OS & Model Android
+        // 2. Fungsi Utama Deteksi Spesifikasi Lengkap
+        function jalankanDeteksiPerangkat() {
+            const ua = navigator.userAgent;
+            let os = "Bukan Android / Desktop PC";
+            let model = "Tidak Diketahui";
+
+            // Tampilkan UUID
+            document.getElementById('device-uuid').innerText = getOrCreateUUID();
+
+            // Deteksi OS & Model Dasar
             if (/Android/i.test(ua)) {
                 const matchVersi = ua.match(/Android\s([0-9\.]+)/);
                 os = matchVersi ? `Android ${matchVersi[1]}` : "Android";
                 
                 const matchModel = ua.match(/Linux; Android[^;]+;\s([^)]+)/);
                 if (matchModel) {
-                    // Membersihkan teks build number jika ikut terbawa
                     model = matchModel[1].split(' Build/')[0]; 
                 }
-            } else if (/iPhone|iPad/i.test(ua)) {
+            } else if (/iPhone|iPad|iPod/i.test(ua)) {
                 os = "iOS";
                 model = /iPhone/i.test(ua) ? "iPhone" : "iPad";
                 document.getElementById('tipe-perangkat').innerText = "iOS Device";
+            } else if (/Windows/i.test(ua)) {
+                os = "Windows OS";
+                model = "Desktop PC / Laptop";
+                document.getElementById('tipe-perangkat').innerText = "Komputer";
             }
 
             document.getElementById('model-perangkat').innerText = model;
             document.getElementById('os-versi').innerText = os;
 
-            // 2. Deteksi Resolusi Layar asli (dikali pixel ratio perangkat)
-            const lebar = window.screen.width * window.devicePixelRatio;
-            const tinggi = window.screen.height * window.devicePixelRatio;
-            document.getElementById('layar-resolusi').innerText = `${Math.round(lebar)} x ${Math.round(tinggi)} Pixels`;
+            // Deteksi Layar & Resolusi Asli Fisik HP
+            const lebarFisik = window.screen.width * window.devicePixelRatio;
+            const tinggiFisik = window.screen.height * window.devicePixelRatio;
+            document.getElementById('layar-resolusi').innerText = `${Math.round(lebarFisik)} x ${Math.round(tinggiFisik)} Pixels`;
+            document.getElementById('pixel-ratio').innerText = `${window.devicePixelRatio}x`;
 
-            // 3. Deteksi Orientasi Layar
+            // Deteksi Orientasi Default Layar
             const orientasi = window.screen.width > window.screen.height ? "Landscape" : "Portrait (Smartphone)";
             document.getElementById('orientasi-layar').innerText = orientasi;
 
-            // 4. Deteksi Status Baterai (Menggunakan Battery API Web standard)
-            if (navigator.getBattery) {
-                navigator.getBattery().then(function(battery) {
-                    function updateBaterai() {
-                        const level = Math.round(battery.level * 100);
-                        const cas = battery.charging ? "⚡ Mengisi Daya" : "🔋 Tidak Dicas";
-                        document.getElementById('status-baterai').innerText = `${level}% (${cas})`;
-                    }
-                    updateBaterai();
-                    battery.addEventListener('levelchange', updateBaterai);
-                    battery.addEventListener('chargingchange', updateBaterai);
-                });
+            // Deteksi Hardware CPU Core
+            if (navigator.hardwareConcurrency) {
+                document.getElementById('cpu-cores').innerText = `${navigator.hardwareConcurrency} Core / Threads`;
             } else {
-                document.getElementById('status-baterai').innerText = "Tidak Didukung Browser";
+                document.getElementById('cpu-cores').innerText = "Tidak Didukung";
             }
-        }
 
-        // Jalankan fungsi ketika seluruh dokumen selesai dimuat
-        window.addEventListener('DOMContentLoaded', dapatkanInfoPerangkat);
-    </script>
+            // Deteksi RAM Perangkat (Dibulatkan Browser untuk Keamanan Privasi)
+            if (navigator.deviceMemory) {
+                document.getElementById('ram-capacity').innerText = `± ${navigator.deviceMemory} GB`;
+            } else {
+                document.getElementById('ram-capacity').innerText = "Dibatasi Browser / iOS";
+            }
 
-</body>
-</html>
+            // Deteksi GPU / Kartu Grafis Fisik Perangkat keras menggunakan WebGL
+            try {
+                const canvas = document.createElement('canvas');
+                const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+                if (gl) {
+                    const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+                    if (debugInfo) {
+                        const vendor = gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL);
+                        const renderer = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
+                        
+                        // Bersihkan teks ANGLE jika ada pada browser chromium
+                        document.getElementById('gpu-vendor').innerText = vendor.replace(/Google Inc\.\s?/g, '');
+                        document.getElementById('gpu-renderer').innerText = renderer;
