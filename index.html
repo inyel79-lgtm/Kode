@@ -18,7 +18,6 @@
             overflow-x: hidden;
             position: relative;
         }
-        /* FITUR ANIMASI LATAR BELAKANG */
         body::before {
             content: "";
             position: absolute;
@@ -33,7 +32,6 @@
             0% { transform: translate(-25%, -25%) rotate(0deg); }
             100% { transform: translate(-25%, -25%) rotate(360deg); }
         }
-
         .card {
             background-color: rgba(28, 37, 65, 0.85);
             backdrop-filter: blur(10px);
@@ -41,7 +39,7 @@
             border-radius: 15px;
             width: 100%;
             max-width: 450px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+            box-shadow: 0 8px 32 rgba(0,0,0,0.5);
             border: 1px solid rgba(78, 168, 222, 0.2);
         }
         h2 {
@@ -68,8 +66,6 @@
         }
         .kiri { color: #a5a5a5; font-style: italic; }
         .kanan { font-weight: bold; color: #4ea8de; text-align: right; }
-        
-        /* INDIKATOR SINYAL & SKOR */
         .badge-status {
             padding: 2px 8px;
             border-radius: 20px;
@@ -79,7 +75,6 @@
         }
         .online { background-color: #06d6a0; }
         .offline { background-color: #ff1654; color: #fff; }
-        
         .skor-box {
             background: linear-gradient(135deg, #1c2541, #3a506b);
             padding: 12px;
@@ -94,7 +89,6 @@
             color: #64dfdf;
             text-shadow: 0 0 15px rgba(100, 223, 223, 0.6);
         }
-
         .btn-container {
             display: flex;
             flex-direction: column;
@@ -116,7 +110,6 @@
         .btn-primary:hover { background-color: #64dfdf; box-shadow: 0 0 10px rgba(100, 223, 223, 0.4); }
         .btn-refresh { background-color: #3a506b; color: #ffffff; }
         .btn-refresh:hover { background-color: #5c7494; }
-        
         .toast {
             background-color: #06d6a0;
             color: #0b132b;
@@ -159,7 +152,6 @@
             <span class="kanan" id="orientasi">Memuat...</span>
         </div>
 
-        <!-- FITUR LIVE ESTIMASI SKOR PERFORMA -->
         <div class="section-title">Uji Performa Browser</div>
         <div class="skor-box">
             <div style="font-size: 0.8rem; color: #a5a5a5; margin-bottom: 5px;">ESTIMASI SKOR HARDWARE</div>
@@ -176,18 +168,38 @@
     </div>
 
     <script>
+        // Fungsi pembantu ekstraksi alternatif yang aman dari bahaya crash
+        function ekstrakAlternatif(teksUa) {
+            try {
+                var matchKurung = teksUa.match(/\(([^)]+)\)/);
+                if (matchKurung && matchKurung[1]) {
+                    var komponen = matchKurung[1].split(";");
+                    if (komponen.length > 0) {
+                        var kandidat = komponen[komponen.length - 1].trim();
+                        if (kandidat !== "K" && kandidat !== "U") {
+                            return kandidat;
+                        }
+                    }
+                }
+            } catch(e) {}
+            return "Perangkat Android";
+        }
+
         try {
             var ua = navigator.userAgent;
             var osInfo = "Bukan Android";
             var modelInfo = "Mencari model...";
 
             if (ua.indexOf("Android") !== -1) {
-                osInfo = "Android";
+                osInfo = "Android 13"; 
                 var matchVersi = ua.match(/Android\s([0-9\.]+)/);
-                if (matchVersi) { osInfo = "Android " + matchVersi; }
+                if (matchVersi && matchVersi[1]) { 
+                    osInfo = "Android " + matchVersi[1]; 
+                }
                 modelInfo = "Perangkat Android (K)";
             } else if (ua.indexOf("iPhone") !== -1) {
-                osInfo = "iOS"; modelInfo = "iPhone";
+                osInfo = "iOS"; 
+                modelInfo = "iPhone";
             }
 
             document.getElementById("os").innerHTML = osInfo;
@@ -195,29 +207,30 @@
             document.getElementById("layar").innerHTML = Math.round(window.screen.width * window.devicePixelRatio) + " x " + Math.round(window.screen.height * window.devicePixelRatio) + " px";
             document.getElementById("orientasi").innerHTML = window.screen.width > window.screen.height ? "Landscape" : "Portrait";
 
+            // Deteksi model modern (High Entropy) dengan sistem pengaman penuh
             if (navigator.userAgentData && navigator.userAgentData.getHighEntropyValues) {
                 navigator.userAgentData.getHighEntropyValues(["model", "platformVersion"])
                     .then(function(hints) {
-                        if (hints.model) { document.getElementById("model").innerHTML = hints.model; }
-                        if (hints.platformVersion && osInfo.indexOf("Android") !== -1) {
-                            var versiUtama = hints.platformVersion.split(".");
-                            if(parseInt(versiUtama) >= 10) { document.getElementById("os").innerHTML = "Android " + versiUtama; }
+                        if (hints.model) { 
+                            document.getElementById("model").innerHTML = hints.model; 
+                        } else {
+                            document.getElementById("model").innerHTML = ekstrakAlternatif(ua);
+                        }
+                        if (hints.platformVersion && ua.indexOf("Android") !== -1) {
+                            var versiUtama = hints.platformVersion.split(".")[0];
+                            if(parseInt(versiUtama) >= 10) { 
+                                document.getElementById("os").innerHTML = "Android " + versiUtama; 
+                            }
                         }
                     })
-                    .catch(function() { ekstrakAlternatif(ua); });
+                    .catch(function() { 
+                        document.getElementById("model").innerHTML = ekstrakAlternatif(ua); 
+                    });
             } else {
-                ekstrakAlternatif(ua);
+                document.getElementById("model").innerHTML = ekstrakAlternatif(ua);
             }
 
-            function ekstrakAlternatif(teksUa) {
-                var matchKurung = teksUa.match(/\(([^)]+)\)/);
-                if (matchKurung) {
-                    var bagianData = matchKurung.split("; ");
-                    document.getElementById("model").innerHTML = bagianData[bagianData.length - 1];
-                }
-            }
-
-            // FITUR INTERNET MONITOR (REAL-TIME)
+            // Fungsi Live Internet Monitor
             function updateStatusKoneksi() {
                 var statusBox = document.getElementById("status-internet");
                 if (navigator.onLine) {
@@ -232,26 +245,10 @@
             window.addEventListener('offline', updateStatusKoneksi);
             updateStatusKoneksi();
 
-            // FITUR HITUNG BENCHMARK RENDER (SIMULASI SKOR)
+            // Uji Performa FPS Render
             var start = performance.now();
             var frames = 0;
             function hitungSkorPerforma() {
                 frames++;
                 var waktuSkini = performance.now();
                 if (waktuSkini - start >= 500) { 
-                    var kalkulasiSkor = Math.round((frames * 60) + (window.devicePixelRatio * 250));
-                    // Bonus poin jika core CPU terdeteksi banyak
-                    if(navigator.hardwareConcurrency) { kalkulasiSkor += (navigator.hardwareConcurrency * 150); }
-                    document.getElementById("skor-hp").innerHTML = kalkulasiSkor + " PTS";
-                } else {
-                    requestAnimationFrame(hitungSkorPerforma);
-                }
-            }
-            requestAnimationFrame(hitungSkorPerforma);
-
-        } catch (error) {
-            alert("Terjadi masalah: " + error.message);
-        }
-
-        function salinInfo() {
-            var txtOs = document.getElementById("os").innerText;
