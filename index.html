@@ -41,7 +41,7 @@
 <body>
 
     <div class="card">
-        <h2> TENTANG PERANGKAT (INSTAN)</h2>
+        <h2>📱 TENTANG PERANGKAT (TERBARU)</h2>
         
         <div class="baris">
             <span class="kiri">Sistem Operasi / OS</span>
@@ -66,41 +66,65 @@
     </div>
 
     <script>
-        // KODE LANGSUNG BERJALAN INSTAN TANPA MENUNGGU APAPUN
         try {
             var ua = navigator.userAgent;
             var osInfo = "Bukan Android";
-            var modelInfo = "Desktop PC";
+            var modelInfo = "Mencari model...";
 
-            // Deteksi Android Sederhana
+            // 1. Deteksi OS Dasar
             if (ua.indexOf("Android") !== -1) {
                 osInfo = "Android";
-                var bagianAndroid = ua.split("Android ");
-                if (bagianAndroid[1]) {
-                    osInfo = "Android " + bagianAndroid[1].split(";")[0];
+                var matchVersi = ua.match(/Android\s([0-9\.]+)/);
+                if (matchVersi) {
+                    osInfo = "Android " + matchVersi[1];
                 }
-                
-                var bagianModel = ua.split("Linux; Android ");
-                if (bagianModel[1]) {
-                    var detailModel = bagianModel[1].split("; ");
-                    if (detailModel[1]) {
-                        modelInfo = detailModel[1].split(" Build/")[0];
-                    }
-                }
+                modelInfo = "Perangkat Android (K)";
             } else if (ua.indexOf("iPhone") !== -1) {
                 osInfo = "iOS";
                 modelInfo = "iPhone";
             }
 
-            // Langsung isi ke HTML detik ini juga
+            // Tampilkan data dasar terlebih dahulu
             document.getElementById("os").innerHTML = osInfo;
             document.getElementById("model").innerHTML = modelInfo;
-            document.getElementById("layar").innerHTML = (window.screen.width * window.devicePixelRatio) + " x " + (window.screen.height * window.devicePixelRatio) + " px";
+            document.getElementById("layar").innerHTML = Math.round(window.screen.width * window.devicePixelRatio) + " x " + Math.round(window.screen.height * window.devicePixelRatio) + " px";
             document.getElementById("orientasi").innerHTML = window.screen.width > window.screen.height ? "Landscape" : "Portrait";
             document.getElementById("mentah").innerHTML = ua;
 
+            // 2. TEKNOLOGI MODERN: Menjebol kode "K" untuk mengambil Model HP Asli
+            if (navigator.userAgentData && navigator.userAgentData.getHighEntropyValues) {
+                navigator.userAgentData.getHighEntropyValues(["model", "platformVersion"])
+                    .then(function(hints) {
+                        if (hints.model) {
+                            // Menampilkan model spesifik HP Anda (Misal: POCO M4 Pro / Xiaomi 2201117PG)
+                            document.getElementById("model").innerHTML = hints.model;
+                        }
+                        if (hints.platformVersion && osInfo.indexOf("Android") !== -1) {
+                            // Mengambil versi Android yang lebih akurat jika mendeteksi sistem internal
+                            var versiUtama = hints.platformVersion.split(".")[0];
+                            if(parseInt(versiUtama) >= 10) {
+                                document.getElementById("os").innerHTML = "Android " + versiUtama;
+                            }
+                        }
+                    })
+                    .catch(function(err) {
+                        // Jika diblokir oleh setelan browser, tampilkan inisial tanda kurung UA
+                        ekstrakAlternatif(ua);
+                    });
+            } else {
+                ekstrakAlternatif(ua);
+            }
+
+            function ekstrakAlternatif(teksUa) {
+                var matchKurung = teksUa.match(/\(([^)]+)\)/);
+                if (matchKurung && matchKurung[1]) {
+                    var bagianData = matchKurung[1].split("; ");
+                    document.getElementById("model").innerHTML = bagianData[bagianData.length - 1];
+                }
+            }
+
         } catch (error) {
-            alert("Terjadi masalah pada pemuatan data: " + error.message);
+            alert("Terjadi masalah: " + error.message);
         }
     </script>
 
