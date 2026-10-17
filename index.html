@@ -3,245 +3,106 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tentang Perangkat - Informasi Lengkap</title>
+    <title>Cek Perangkat</title>
     <style>
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: sans-serif;
             background-color: #0b132b;
             color: #ffffff;
             padding: 20px;
             display: flex;
             justify-content: center;
-            align-items: center;
-            min-height: 95vh;
         }
         .card {
             background-color: #1c2541;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            padding: 20px;
+            border-radius: 10px;
             width: 100%;
-            max-width: 550px;
-        }
-        .header-box {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 2px solid #3a506b;
-            padding-bottom: 10px;
-            margin-bottom: 15px;
+            max-width: 450px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
         h2 {
             color: #4ea8de;
-            margin: 0;
-            text-transform: uppercase;
+            border-bottom: 2px solid #3a506b;
+            padding-bottom: 8px;
+            margin-top: 0;
             font-size: 1.1rem;
-            letter-spacing: 1px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
         }
-        .section-title {
-            font-size: 0.8rem;
-            color: #64dfdf;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin: 15px 0 8px 0;
-            padding-bottom: 3px;
-            border-bottom: 1px dashed #3a506b;
-        }
-        .info-row {
+        .baris {
             display: flex;
             justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
             font-size: 0.9rem;
         }
-        .label {
-            color: #a5a5a5;
-            font-style: italic;
-        }
-        .value {
-            font-weight: bold;
-            text-align: right;
-            max-width: 60%;
-            word-break: break-word;
-        }
-        .badge {
-            background-color: #06d6a0;
-            color: #0b132b;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 0.75rem;
-            font-weight: bold;
-            margin-right: 6px;
-            font-style: normal;
-        }
-        .highlight-blue { color: #4ea8de; }
-        .highlight-green { color: #06d6a0; }
-        .highlight-yellow { color: #ffd166; }
+        .kiri { color: #a5a5a5; font-style: italic; }
+        .kanan { font-weight: bold; color: #4ea8de; text-align: right; }
     </style>
 </head>
 <body>
 
     <div class="card">
-        <div class="header-box">
-            <h2>📱 TENTANG PERANGKAT (FULL)</h2>
-            <span style="color: #4ea8de; font-size: 0.8rem;">▲</span>
-        </div>
+        <h2> TENTANG PERANGKAT (INSTAN)</h2>
         
-        <div class="section-title">Identitas & Sistem</div>
-        <div class="info-row">
-            <span class="label">Tipe Perangkat</span>
-            <span class="value"><span class="badge">📳 HP</span><span id="tipe-perangkat">Smartphone / HP</span></span>
+        <div class="baris">
+            <span class="kiri">Sistem Operasi / OS</span>
+            <span class="kanan" id="os">Memuat...</span>
         </div>
-        <div class="info-row">
-            <span class="label">ID Unik Perangkat (Web UUID)</span>
-            <span class="value highlight-yellow" id="device-uuid">Mencari...</span>
+        <div class="baris">
+            <span class="kiri">Model Perangkat</span>
+            <span class="kanan" id="model">Memuat...</span>
         </div>
-        <div class="info-row">
-            <span class="label">Model Perangkat</span>
-            <span class="value" id="model-perangkat" style="text-transform: uppercase;">Mencari...</span>
+        <div class="baris">
+            <span class="kiri">Resolusi Layar</span>
+            <span class="kanan" id="layar">Memuat...</span>
         </div>
-        <div class="info-row">
-            <span class="label">Versi Sistem Android / OS</span>
-            <span class="value highlight-blue" id="os-versi">Mencari...</span>
+        <div class="baris">
+            <span class="kiri">Orientasi</span>
+            <span class="kanan" id="orientasi">Memuat...</span>
         </div>
-
-        <div class="section-title">Tampilan & Layar</div>
-        <div class="info-row">
-            <span class="label">Resolusi Layar HP</span>
-            <span class="value highlight-blue" id="layar-resolusi">Mencari...</span>
-        </div>
-        <div class="info-row">
-            <span class="label">Mode Orientasi Default</span>
-            <span class="value highlight-blue" id="orientasi-layar">Mencari...</span>
-        </div>
-        <div class="info-row">
-            <span class="label">Kerapatan Pixel (Device Pixel Ratio)</span>
-            <span class="value" id="pixel-ratio">Mencari...</span>
-        </div>
-
-        <div class="section-title">Spesifikasi Hardware</div>
-        <div class="info-row">
-            <span class="label">Jumlah Core CPU / Processor</span>
-            <span class="value" id="cpu-cores">Mencari...</span>
-        </div>
-        <div class="info-row">
-            <span class="label">Estimasi Kapasitas RAM</span>
-            <span class="value" id="ram-capacity">Mencari...</span>
-        </div>
-        <div class="info-row">
-            <span class="label">GPU Vendor (Grafis)</span>
-            <span class="value" id="gpu-vendor">Mencari...</span>
-        </div>
-        <div class="info-row">
-            <span class="label">GPU Renderer (Model Chip Grafis)</span>
-            <span class="value highlight-blue" id="gpu-renderer">Mencari...</span>
-        </div>
-
-        <div class="section-title">Status & Koneksi</div>
-        <div class="info-row">
-            <span class="label">Status Baterai</span>
-            <span class="value highlight-green" id="status-baterai">Mencari...</span>
-        </div>
-        <div class="info-row">
-            <span class="label">Tipe Koneksi Jaringan</span>
-            <span class="value" id="network-type">Mencari...</span>
-        </div>
-        <div class="info-row">
-            <span class="label">Bahasa Sistem</span>
-            <span class="value" id="sys-language">Mencari...</span>
+        <div class="baris">
+            <span class="kiri">Data Mentah Browser</span>
+            <span class="kanan" id="mentah" style="font-size:0.75rem; font-weight:normal; word-break:break-all; color:#8ecae6;">Memuat...</span>
         </div>
     </div>
 
     <script>
-        // 1. Fungsi UUID Aman
-        function getOrCreateUUID() {
-            try {
-                let uuid = localStorage.getItem('device_system_uuid');
-                if (!uuid) {
-                    uuid = 'dev-' + 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-                        const r = Math.random() * 16 | 0;
-                        const v = c === 'x' ? r : (r & 0x3 | 0x8);
-                        return v.toString(16);
-                    });
-                    localStorage.setItem('device_system_uuid', uuid);
+        // KODE LANGSUNG BERJALAN INSTAN TANPA MENUNGGU APAPUN
+        try {
+            var ua = navigator.userAgent;
+            var osInfo = "Bukan Android";
+            var modelInfo = "Desktop PC";
+
+            // Deteksi Android Sederhana
+            if (ua.indexOf("Android") !== -1) {
+                osInfo = "Android";
+                var bagianAndroid = ua.split("Android ");
+                if (bagianAndroid[1]) {
+                    osInfo = "Android " + bagianAndroid[1].split(";")[0];
                 }
-                return uuid;
-            } catch (e) {
-                return "dev-tidak-diizinkan-browser";
-            }
-        }
-
-        // 2. Fungsi Utama Deteksi (Dengan Pengaman Anti-Macet di setiap bagian)
-        function jalankanDeteksiPerangkat() {
-            const ua = navigator.userAgent;
-
-            // Tampilkan UUID
-            document.getElementById('device-uuid').innerText = getOrCreateUUID();
-
-            // Deteksi OS & Model Dasar
-            try {
-                let os = "Bukan Android / Desktop PC";
-                let model = "Tidak Diketahui";
-
-                if (/Android/i.test(ua)) {
-                    const matchVersi = ua.match(/Android\s([0-9\.]+)/);
-                    os = matchVersi ? `Android ${matchVersi[1]}` : "Android";
-                    
-                    const matchModel = ua.match(/Linux; Android[^;]+;\s([^)]+)/);
-                    if (matchModel) {
-                        model = matchModel[1].split(' Build/')[0]; 
+                
+                var bagianModel = ua.split("Linux; Android ");
+                if (bagianModel[1]) {
+                    var detailModel = bagianModel[1].split("; ");
+                    if (detailModel[1]) {
+                        modelInfo = detailModel[1].split(" Build/")[0];
                     }
-                } else if (/iPhone|iPad|iPod/i.test(ua)) {
-                    os = "iOS";
-                    model = /iPhone/i.test(ua) ? "iPhone" : "iPad";
-                    document.getElementById('tipe-perangkat').innerText = "iOS Device";
-                } else if (/Windows/i.test(ua)) {
-                    os = "Windows OS";
-                    model = "Desktop PC / Laptop";
-                    document.getElementById('tipe-perangkat').innerText = "Komputer";
                 }
-                document.getElementById('model-perangkat').innerText = model;
-                document.getElementById('os-versi').innerText = os;
-            } catch (e) {
-                document.getElementById('model-perangkat').innerText = "Error membaca";
-                document.getElementById('os-versi').innerText = "Error membaca";
+            } else if (ua.indexOf("iPhone") !== -1) {
+                osInfo = "iOS";
+                modelInfo = "iPhone";
             }
 
-            // Deteksi Layar
-            try {
-                const dpr = window.devicePixelRatio || 1;
-                const lebarFisik = window.screen.width * dpr;
-                const tinggiFisik = window.screen.height * dpr;
-                document.getElementById('layar-resolusi').innerText = `${Math.round(lebarFisik)} x ${Math.round(tinggiFisik)} Pixels`;
-                document.getElementById('pixel-ratio').innerText = `${dpr}x`;
-                document.getElementById('orientasi-layar').innerText = window.screen.width > window.screen.height ? "Landscape" : "Portrait (Smartphone)";
-            } catch (e) {
-                document.getElementById('layar-resolusi').innerText = "Dibatasi";
-            }
+            // Langsung isi ke HTML detik ini juga
+            document.getElementById("os").innerHTML = osInfo;
+            document.getElementById("model").innerHTML = modelInfo;
+            document.getElementById("layar").innerHTML = (window.screen.width * window.devicePixelRatio) + " x " + (window.screen.height * window.devicePixelRatio) + " px";
+            document.getElementById("orientasi").innerHTML = window.screen.width > window.screen.height ? "Landscape" : "Portrait";
+            document.getElementById("mentah").innerHTML = ua;
 
-            // Deteksi CPU Core
-            try {
-                document.getElementById('cpu-cores').innerText = navigator.hardwareConcurrency ? `${navigator.hardwareConcurrency} Core` : "Dibatasi";
-            } catch (e) {
-                document.getElementById('cpu-cores').innerText = "Dibatasi";
-            }
+        } catch (error) {
+            alert("Terjadi masalah pada pemuatan data: " + error.message);
+        }
+    </script>
 
-            // Deteksi RAM
-            try {
-                document.getElementById('ram-capacity').innerText = navigator.deviceMemory ? `± ${navigator.deviceMemory} GB` : "Dibatasi Browser";
-            } catch (e) {
-                document.getElementById('ram-capacity').innerText = "Dibatasi Browser";
-            }
-
-            // Deteksi GPU (WebGl)
-            try {
-                const canvas = document.createElement('canvas');
-                const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
-                if (gl) {
-                    const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
-                    if (debugInfo) {
-                        const vendor = gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL);
-                        const renderer = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
+</body>
+</html>
