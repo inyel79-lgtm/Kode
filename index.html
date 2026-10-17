@@ -3,154 +3,224 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Informasi Perangkat</title>
+    <title>Cek Perangkat</title>
     <style>
-        /* TEMA WARNA CYBERPUNK NEON */
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #050811;
+            font-family: sans-serif;
+            background-color: #0b132b;
             color: #ffffff;
-            margin: 0;
             padding: 20px;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 90vh;
-            overflow: hidden;
-            position: relative;
+            margin: 0;
         }
-
-        /* ANIMASI BACKGROUND GELOMBANG PURE CSS (ANTI-MACET) */
-        .bg-glow {
-            position: absolute;
-            width: 300px;
-            height: 300px;
-            background: radial-gradient(circle, rgba(78, 168, 222, 0.15) 0%, transparent 70%);
-            top: 20%;
-            left: 20%;
-            animation: gerakGlow 8s ease-in-out infinite alternate;
-            z-index: -1;
-        }
-        @keyframes gerakGlow {
-            0% { transform: translate(0, 0) scale(1); }
-            100% { transform: translate(50px, 50px) scale(1.2); }
-        }
-
         .card {
-            background: linear-gradient(135deg, rgba(28, 37, 65, 0.9), rgba(11, 19, 43, 0.9));
-            border: 1px solid rgba(100, 223, 223, 0.3);
-            padding: 30px;
-            border-radius: 16px;
+            background-color: #1c2541;
+            padding: 20px;
+            border-radius: 10px;
             width: 100%;
-            max-width: 440px;
-            box-shadow: 0 0 30px rgba(78, 168, 222, 0.25);
-            box-sizing: border-box;
+            max-width: 450px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
-
         h2 {
-            color: #64dfdf;
-            text-align: center;
-            margin-top: 0;
-            margin-bottom: 25px;
-            font-size: 1.3rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            text-shadow: 0 0 10px rgba(100, 223, 223, 0.5);
+            color: #4ea8de;
             border-bottom: 2px solid #3a506b;
-            padding-bottom: 12px;
+            padding-bottom: 8px;
+            margin-top: 0;
+            font-size: 1.1rem;
         }
-
-        .info-box {
-            margin-bottom: 18px;
-        }
-
-        .label {
-            font-size: 0.8rem;
-            color: #a5a5a5;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 5px;
-        }
-
-        .value {
-            font-size: 1.15rem;
-            font-weight: bold;
-            color: #ffffff;
-            background-color: rgba(5, 8, 17, 0.5);
-            padding: 10px 15px;
-            border-radius: 8px;
-            border-left: 4px solid #4ea8de;
+        .baris {
             display: flex;
             justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 0.9rem;
+        }
+        .kiri { color: #a5a5a5; font-style: italic; }
+        .kanan { font-weight: bold; color: #4ea8de; text-align: right; }
+        
+        /* DESAIN GRUP TOMBOL BARU */
+        .btn-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 20px;
+            border-top: 1px dashed #3a506b;
+            padding-top: 15px;
+        }
+        .btn {
+            font-size: 0.9rem;
+            font-weight: bold;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            justify-content: center;
             align-items: center;
+            gap: 8px;
         }
-
-        .badge {
+        /* Tombol Utama (Salin) */
+        .btn-primary {
+            background-color: #4ea8de;
+            color: #0b132b;
+        }
+        .btn-primary:hover {
+            background-color: #64dfdf;
+            box-shadow: 0 0 10px rgba(100, 223, 223, 0.4);
+        }
+        /* Tombol Sekunder (Kirim) */
+        .btn-secondary {
+            background-color: transparent;
+            color: #64dfdf;
+            border: 1px solid #64dfdf;
+        }
+        .btn-secondary:hover {
+            background-color: rgba(100, 223, 223, 0.1);
+        }
+        /* Tombol Refresh */
+        .btn-refresh {
+            background-color: #3a506b;
+            color: #ffffff;
+        }
+        .btn-refresh:hover {
+            background-color: #5c7494;
+        }
+        /* Notifikasi Sukses Kecil */
+        .toast {
             background-color: #06d6a0;
-            color: #050811;
-            font-size: 0.75rem;
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-weight: bold;
-        }
-
-        /* DESAIN TOMBOL PREMIUM */
-        .btn-action {
-            display: block;
-            width: 100%;
-            background: linear-gradient(90deg, #4ea8de, #64dfdf);
-            color: #050811;
+            color: #0b132b;
             text-align: center;
-            padding: 14px;
-            border-radius: 8px;
+            padding: 8px;
+            border-radius: 4px;
+            font-size: 0.85rem;
             font-weight: bold;
-            font-size: 1rem;
-            text-decoration: none;
-            margin-top: 25px;
-            box-shadow: 0 4px 15px rgba(100, 223, 223, 0.3);
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-        .btn-action:active {
-            transform: scale(0.98);
-            box-shadow: 0 2px 5px rgba(100, 223, 223, 0.2);
+            margin-top: 10px;
+            display: none;
         }
     </style>
 </head>
 <body>
 
-    <div class="bg-glow"></div>
-
     <div class="card">
-        <h2>⚡ Data Sistem HP ⚡</h2>
+        <h2>📱 TENTANG PERANGKAT (TERBARU)</h2>
         
-        <div class="info-box">
-            <div class="label">Sistem Operasi / OS</div>
-            <div class="value">Android 13 <span class="badge" style="background-color: #4ea8de; color: #fff;">API 33</span></div>
+        <div class="baris">
+            <span class="kiri">Sistem Operasi / OS</span>
+            <span class="kanan" id="os">Memuat...</span>
+        </div>
+        <div class="baris">
+            <span class="kiri">Model Perangkat</span>
+            <span class="kanan" id="model">Memuat...</span>
+        </div>
+        <div class="baris">
+            <span class="kiri">Resolusi Layar</span>
+            <span class="kanan" id="layar">Memuat...</span>
+        </div>
+        <div class="baris">
+            <span class="kiri">Orientasi</span>
+            <span class="kanan" id="orientasi">Memuat...</span>
+        </div>
+        <div class="baris">
+            <span class="kiri">Data Mentah Browser</span>
+            <span class="kanan" id="mentah" style="font-size:0.75rem; font-weight:normal; word-break:break-all; color:#8ecae6;">Memuat...</span>
         </div>
 
-        <div class="info-box">
-            <div class="label">Model Perangkat Asli</div>
-            <div class="value">XIAOMI 2201117PG</div>
+        <!-- FITUR TOMBOL INTERAKTIF -->
+        <div class="btn-container">
+            <button class="btn btn-primary" onclick="salinInfo()">📋 Salin Info Perangkat</button>
+            <button class="btn btn-secondary" onclick="kirimData()">🚀 Kirim Data Ke Server</button>
+            <button class="btn btn-refresh" onclick="location.reload()">🔄 Segarkan Halaman</button>
         </div>
-
-        <div class="info-box">
-            <div class="label">Resolusi Layar Fisik</div>
-            <div class="value">1080 x 2402 Pixels</div>
-        </div>
-
-        <div class="info-box">
-            <div class="label">Status Koneksi Core</div>
-            <div class="value">ONLINE / AKTIF <span class="badge">SECURE</span></div>
-        </div>
-
-        <div class="info-box">
-            <div class="label">Mode Orientasi Default</div>
-            <div class="value" style="color: #64dfdf;">Portrait (Smartphone)</div>
-        </div>
-
-        <!-- TOMBOL INTERAKTIF CSS -->
-        <a href="javascript:location.reload()" class="btn-action">🔄 SEGARKAN SISTEM</a>
+        
+        <div id="notif-toast" class="toast">Berhasil disalin ke papan klip!</div>
     </div>
+
+    <script>
+        try {
+            var ua = navigator.userAgent;
+            var osInfo = "Bukan Android";
+            var modelInfo = "Mencari model...";
+
+            if (ua.indexOf("Android") !== -1) {
+                osInfo = "Android";
+                var matchVersi = ua.match(/Android\s([0-9\.]+)/);
+                if (matchVersi) {
+                    osInfo = "Android " + matchVersi[1];
+                }
+                modelInfo = "Perangkat Android (K)";
+            } else if (ua.indexOf("iPhone") !== -1) {
+                osInfo = "iOS";
+                modelInfo = "iPhone";
+            }
+
+            document.getElementById("os").innerHTML = osInfo;
+            document.getElementById("model").innerHTML = modelInfo;
+            document.getElementById("layar").innerHTML = Math.round(window.screen.width * window.devicePixelRatio) + " x " + Math.round(window.screen.height * window.devicePixelRatio) + " px";
+            document.getElementById("orientasi").innerHTML = window.screen.width > window.screen.height ? "Landscape" : "Portrait";
+            document.getElementById("mentah").innerHTML = ua;
+
+            if (navigator.userAgentData && navigator.userAgentData.getHighEntropyValues) {
+                navigator.userAgentData.getHighEntropyValues(["model", "platformVersion"])
+                    .then(function(hints) {
+                        if (hints.model) {
+                            document.getElementById("model").innerHTML = hints.model;
+                        }
+                        if (hints.platformVersion && osInfo.indexOf("Android") !== -1) {
+                            var versiUtama = hints.platformVersion.split(".")[0];
+                            if(parseInt(versiUtama) >= 10) {
+                                document.getElementById("os").innerHTML = "Android " + versiUtama;
+                            }
+                        }
+                    })
+                    .catch(function(err) {
+                        ekstrakAlternatif(ua);
+                    });
+            } else {
+                ekstrakAlternatif(ua);
+            }
+
+            function ekstrakAlternatif(teksUa) {
+                var matchKurung = teksUa.match(/\(([^)]+)\)/);
+                if (matchKurung && matchKurung[1]) {
+                    var bagianData = matchKurung[1].split("; ");
+                    document.getElementById("model").innerHTML = bagianData[bagianData.length - 1];
+                }
+            }
+
+        } catch (error) {
+            alert("Terjadi masalah: " + error.message);
+        }
+
+        // FUNGSI JAVASCRIPT UNTUK TOMBOL SALIN
+        function salinInfo() {
+            var txtOs = document.getElementById("os").innerText;
+            var txtModel = document.getElementById("model").innerText;
+            var txtLayar = document.getElementById("layar").innerText;
+            var txtOrientasi = document.getElementById("orientasi").innerText;
+
+            var teksLengkap = "--- INFO PERANGKAT ---\n" +
+                              "OS: " + txtOs + "\n" +
+                              "Model: " + txtModel + "\n" +
+                              "Resolusi: " + txtLayar + "\n" +
+                              "Orientasi: " + txtOrientasi;
+
+            navigator.clipboard.writeText(teksLengkap).then(function() {
+                var toast = document.getElementById("notif-toast");
+                toast.style.display = "block";
+                setTimeout(function() {
+                    toast.style.display = "none";
+                }, 2500);
+            });
+        }
+
+        // FUNGSI JAVASCRIPT UNTUK SIMULASI TOMBOL KIRIM
+        function kirimData() {
+            alert("Simulasi Berhasil! Data perangkat Anda (" + document.getElementById("model").innerText + ") siap dikirimkan ke database.");
+        }
+    </script>
 
 </body>
 </html>
