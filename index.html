@@ -3,179 +3,169 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tentang Perangkat & Baterai</title>
-    <!-- Memanggil library pendeteksi device lewat CDN -->
-    <script src="https://cloudflare.com"></script>
-    
+    <title>Tentang Perangkat</title>
     <style>
         body {
-            background-color: #050b14;
-            color: #ffffff;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #0b132b;
+            color: #ffffff;
+            padding: 20px;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 20px;
-            box-sizing: border-box;
+            min-height: 90vh;
         }
-
-        .box-perangkat {
-            background-color: #0c1524;
-            border: 1px solid #1a293d;
-            border-radius: 8px;
+        .card {
+            background-color: #1c2541;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
             width: 100%;
-            max-width: 600px;
-            padding: 20px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            max-width: 500px;
         }
-
-        .header {
-            color: #4da6ff;
-            font-weight: bold;
-            text-transform: uppercase;
-            font-size: 16px;
-            margin-bottom: 25px;
-            letter-spacing: 1px;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .baris {
+        .header-box {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 12px;
-            font-size: 14px;
+            border-bottom: 2px solid #3a506b;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
         }
-
+        h2 {
+            color: #4ea8de;
+            margin: 0;
+            text-transform: uppercase;
+            font-size: 1.1rem;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .arrow-up {
+            color: #4ea8de;
+            font-size: 0.8rem;
+        }
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+        }
         .label {
-            color: #a0aec0;
+            color: #a5a5a5;
             font-style: italic;
         }
-
-        .nilai {
+        .value {
             font-weight: bold;
             text-align: right;
         }
-
-        .warna-biru {
-            color: #38bdf8;
-        }
-
-        .warna-hijau {
-            color: #10b981;
-        }
-
-        .badge-hp {
-            background-color: #059669;
-            color: #ffffff;
-            padding: 3px 8px;
+        .badge {
+            background-color: #06d6a0;
+            color: #0b132b;
+            padding: 2px 8px;
             border-radius: 4px;
-            font-size: 12px;
+            font-size: 0.8rem;
             font-weight: bold;
             margin-right: 8px;
             font-style: normal;
         }
+        .highlight-blue { color: #4ea8de; }
+        .highlight-green { color: #06d6a0; }
     </style>
 </head>
 <body>
 
-    <div class="box-perangkat">
-        <div class="header">
-            <span>📱 TENTANG PERANGKAT</span>
-            <span>▲</span>
+    <div class="card">
+        <div class="header-box">
+            <h2>📱 TENTANG PERANGKAT</h2>
+            <span class="arrow-up">▲</span>
         </div>
-
-        <div class="baris">
+        
+        <div class="info-row">
             <span class="label">Tipe Perangkat</span>
-            <span class="nilai"><span class="badge-hp">📱 HP</span> <span id="tipe">Memuat...</span></span>
+            <span class="value"><span class="badge">📳 HP</span><span id="tipe-perangkat">Smartphone / HP</span></span>
         </div>
 
-        <div class="baris">
+        <div class="info-row">
             <span class="label">Model Perangkat</span>
-            <span class="nilai" id="model" style="text-transform: uppercase;">Memuat...</span>
+            <span class="value" id="model-perangkat" style="text-transform: uppercase;">Mencari...</span>
         </div>
 
-        <div class="baris">
+        <div class="info-row">
             <span class="label">Versi Sistem Android</span>
-            <span class="nilai warna-biru" id="os">Memuat...</span>
+            <span class="value highlight-blue" id="os-versi">Mencari...</span>
         </div>
 
-        <div class="baris">
+        <div class="info-row">
             <span class="label">Resolusi Layar HP</span>
-            <span class="nilai warna-biru" id="resolusi">Memuat...</span>
+            <span class="value highlight-blue" id="layar-resolusi">Mencari...</span>
         </div>
 
-        <div class="baris">
+        <div class="info-row">
             <span class="label">Status Baterai</span>
-            <span class="nilai warna-hijau" id="baterai">Memuat API Baterai...</span>
+            <span class="value highlight-green" id="status-baterai">Mencari...</span>
         </div>
 
-        <div class="baris">
+        <div class="info-row">
             <span class="label">Mode Orientasi Default</span>
-            <span class="nilai warna-biru" id="orientasi">Memuat...</span>
+            <span class="value highlight-blue" id="orientasi-layar">Mencari...</span>
         </div>
     </div>
 
     <script>
-        // 1. PROSES DETEKSI PERANGKAT (UA-Parser)
-        const parser = new UAParser();
-        const info = parser.getResult();
+        function dapatkanInfoPerangkat() {
+            const ua = navigator.userAgent;
+            let os = "Bukan Android";
+            let model = "Desktop / PC";
 
-        const tipePerangkat = info.device.type === 'mobile' ? 'Smartphone / HP' : (info.device.type === 'tablet' ? 'Tablet' : 'Desktop / PC');
-        document.getElementById('tipe').innerText = tipePerangkat;
-
-        const vendor = info.device.vendor ? info.device.vendor : '';
-        const model = info.device.model ? info.device.model : 'Tidak Diketahui';
-        document.getElementById('model').innerText = `${vendor} ${model}`.trim();
-
-        const namaOS = info.os.name ? info.os.name : 'Unknown OS';
-        const versiOS = info.os.version ? info.os.version : '';
-        document.getElementById('os').innerText = `${namaOS} ${versiOS}`;
-
-
-        // 2. PROSES DETEKSI RESOLUSI LAYAR
-        // Mengambil lebar asli (screen.width) x tinggi asli (screen.height) dikali rasio pixel perangkat
-        const lebarAsli = screen.width * window.devicePixelRatio;
-        const tinggiAsli = screen.height * window.devicePixelRatio;
-        document.getElementById('resolusi').innerText = `${lebarAsli} x ${tinggiAsli} Pixel`;
-
-
-        // 3. PROSES DETEKSI BATERAI (Menggunakan Battery Status API bawaan Browser)
-        if ('getBattery' in navigator) {
-            navigator.getBattery().then(function(battery) {
-                // Fungsi update tampilan data baterai
-                function updateInfoBaterai() {
-                    const levelBaterai = Math.round(battery.level * 100);
-                    const sedangDicharge = battery.charging ? "⚡ Sedang Di-charger" : "🔋 Tidak Di-charger";
-                    
-                    document.getElementById('baterai').innerText = `${levelBaterai}% (${sedangDicharge})`;
+            // 1. Deteksi OS & Model Android
+            if (/Android/i.test(ua)) {
+                const matchVersi = ua.match(/Android\s([0-9\.]+)/);
+                os = matchVersi ? `Android ${matchVersi[1]}` : "Android";
+                
+                const matchModel = ua.match(/Linux; Android[^;]+;\s([^)]+)/);
+                if (matchModel) {
+                    // Membersihkan teks build number jika ikut terbawa
+                    model = matchModel[1].split(' Build/')[0]; 
                 }
+            } else if (/iPhone|iPad/i.test(ua)) {
+                os = "iOS";
+                model = /iPhone/i.test(ua) ? "iPhone" : "iPad";
+                document.getElementById('tipe-perangkat').innerText = "iOS Device";
+            }
 
-                // Jalankan saat pertama kali dibuka
-                updateInfoBaterai();
+            document.getElementById('model-perangkat').innerText = model;
+            document.getElementById('os-versi').innerText = os;
 
-                // Deteksi otomatis jika kabel charger dicolok/dicabut atau persentase berubah
-                battery.addEventListener('chargingchange', updateInfoBaterai);
-                battery.addEventListener('levelchange', updateInfoBaterai);
-            });
-        } else {
-            document.getElementById('baterai').innerText = "Tidak didukung oleh browser ini";
-        }
+            // 2. Deteksi Resolusi Layar asli (dikali pixel ratio perangkat)
+            const lebar = window.screen.width * window.devicePixelRatio;
+            const tinggi = window.screen.height * window.devicePixelRatio;
+            document.getElementById('layar-resolusi').innerText = `${Math.round(lebar)} x ${Math.round(tinggi)} Pixels`;
 
+            // 3. Deteksi Orientasi Layar
+            const orientasi = window.screen.width > window.screen.height ? "Landscape" : "Portrait (Smartphone)";
+            document.getElementById('orientasi-layar').innerText = orientasi;
 
-        // 4. DETEKSI ORIENTASI LAYAR
-        function cekOrientasi() {
-            if (window.innerHeight > window.innerWidth) {
-                document.getElementById('orientasi').innerText = "Portrait (Smartphone)";
+            // 4. Deteksi Status Baterai (Menggunakan Battery API Web standard)
+            if (navigator.getBattery) {
+                navigator.getBattery().then(function(battery) {
+                    function updateBaterai() {
+                        const level = Math.round(battery.level * 100);
+                        const cas = battery.charging ? "⚡ Mengisi Daya" : "🔋 Tidak Dicas";
+                        document.getElementById('status-baterai').innerText = `${level}% (${cas})`;
+                    }
+                    updateBaterai();
+                    battery.addEventListener('levelchange', updateBaterai);
+                    battery.addEventListener('chargingchange', updateBaterai);
+                });
             } else {
-                document.getElementById('orientasi').innerText = "Landscape (Desktop/Tablet)";
+                document.getElementById('status-baterai').innerText = "Tidak Didukung Browser";
             }
         }
-        cekOrientasi();
-        window.addEventListener('resize', cekOrientasi); // Otomatis berubah saat HP dimiringkan
+
+        // Jalankan fungsi ketika seluruh dokumen selesai dimuat
+        window.addEventListener('DOMContentLoaded', dapatkanInfoPerangkat);
     </script>
 
 </body>
