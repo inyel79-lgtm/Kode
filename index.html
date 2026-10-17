@@ -159,6 +159,22 @@
     </div>
 
     <script>
+        // FUNGSI UNTUK MEMANTAU ORIENTASI SECARA LIVE
+        function perbaruiOrientasiLayar() {
+            try {
+                // Mendeteksi orientasi berdasarkan perbandingan lebar dan tinggi jendela browser terbaru
+                var lebarSkara = window.innerWidth;
+                var tinggiSkara = window.innerHeight;
+                
+                var orientasiStr = "Portrait (Smartphone)";
+                if (lebarSkara > tinggiSkara) {
+                    orientasiStr = "Landscape (Dimiringkan)";
+                }
+                
+                document.getElementById("orientasi-sistem").innerHTML = orientasiStr;
+            } catch (e) {}
+        }
+
         function jalankanDeteksiOtomatis() {
             var ua = navigator.userAgent;
             var tipeStr = "Desktop PC / Laptop";
@@ -167,23 +183,21 @@
             var modelStr = "Windows / Mac PC";
             var osStr = "Windows OS";
 
-            // 1. ISI DATA DASAR TERLEBIH DAHULU (Biar tidak macet di tulisan Mendeteksi)
             try {
                 if (/Android/i.test(ua)) {
                     tipeStr = "Smartphone / HP";
                     badgeStr = "ANDROID";
                     badgeWarna = "#06d6a0";
-                    osStr = "Android 13"; // Perkiraan dasar untuk Poco M4 Pro Anda
+                    osStr = "Android OS";
                     modelStr = "Xiaomi Perangkat";
                     
-                    // Coba cari angka versi Android di dalam teks User Agent secara aman
                     var cariVersi = ua.match(/Android\s([0-9\.]+)/);
-                    if (cariVersi && cariVersi[1]) {
+                    if (cariVersi) {
                         osStr = "Android " + cariVersi[1];
                     }
                     
                     var cariModel = ua.match(/Linux; Android[^;]+;\s([^)]+)/);
-                    if (cariModel && cariModel[1]) {
+                    if (cariModel) {
                         modelStr = cariModel[1].split(" Build/")[0];
                     }
                 } else if (/iPhone|iPad|iPod/i.test(ua)) {
@@ -200,7 +214,6 @@
                     modelStr = "Personal Computer (PC)";
                 }
 
-                // Cetak data awal agar layar langsung terisi data
                 document.getElementById("tipe-sistem").innerHTML = tipeStr + ' <span class="badge" id="badge-tipe">' + badgeStr + '</span>';
                 document.getElementById("badge-tipe").style.backgroundColor = badgeWarna;
                 document.getElementById("model-sistem").innerHTML = modelStr;
@@ -209,13 +222,14 @@
                 var lebarFisik = Math.round(window.screen.width * (window.devicePixelRatio || 1));
                 var tinggiFisik = Math.round(window.screen.height * (window.devicePixelRatio || 1));
                 document.getElementById("resolusi-sistem").innerHTML = lebarFisik + " x " + tinggiFisik + " Pixels";
-                document.getElementById("orientasi-sistem").innerHTML = window.screen.width > window.screen.height ? "Landscape (Monitor)" : "Portrait (Smartphone)";
+                
+                // Jalankan deteksi orientasi awal
+                perbaruiOrientasiLayar();
+
             } catch(e) {
-                // Pengaman darurat jika ada fungsi bawaan browser yang mati
                 document.getElementById("os-dasar").innerHTML = "Android System";
             }
 
-            // 2. TEKNOLOGI MODERN JALUR UTAMA (Membaca data High Entropy secara aman)
             try {
                 if (navigator.userAgentData && navigator.userAgentData.getHighEntropyValues) {
                     navigator.userAgentData.getHighEntropyValues(["model", "platformVersion"])
@@ -225,7 +239,6 @@
                             }
                             if (hints.platformVersion) {
                                 var versiUtama = hints.platformVersion.split(".")[0];
-                                // Jika terdeteksi angka versi di Android, timpa dengan data yang akurat
                                 if (/Android/i.test(ua) || badgeStr === "ANDROID") {
                                     document.getElementById("os-dasar").innerHTML = "Android " + versiUtama;
                                 }
@@ -236,6 +249,10 @@
         }
 
         window.addEventListener('DOMContentLoaded', jalankanDeteksiOtomatis);
+        
+        // PENGAMAN OTOMATIS: Dijalankan setiap kali layar HP diputar (Resize / Rotate)
+        window.addEventListener('resize', perbaruiOrientasiLayar);
+        window.addEventListener('orientationchange', perbaruiOrientasiLayar);
     </script>
 
 </body>
