@@ -90,7 +90,6 @@
             <span style="color: #4ea8de; font-size: 0.8rem;">▲</span>
         </div>
         
-        <!-- BAGIAN 1: IDENTITAS & SOFTWARE -->
         <div class="section-title">Identitas & Sistem</div>
         <div class="info-row">
             <span class="label">Tipe Perangkat</span>
@@ -109,7 +108,6 @@
             <span class="value highlight-blue" id="os-versi">Mencari...</span>
         </div>
 
-        <!-- BAGIAN 2: SPESIFIKASI LAYAR -->
         <div class="section-title">Tampilan & Layar</div>
         <div class="info-row">
             <span class="label">Resolusi Layar HP</span>
@@ -124,7 +122,6 @@
             <span class="value" id="pixel-ratio">Mencari...</span>
         </div>
 
-        <!-- BAGIAN 3: SPESIFIKASI PERANGKAT KERAS (HARDWARE) -->
         <div class="section-title">Spesifikasi Hardware</div>
         <div class="info-row">
             <span class="label">Jumlah Core CPU / Processor</span>
@@ -143,7 +140,6 @@
             <span class="value highlight-blue" id="gpu-renderer">Mencari...</span>
         </div>
 
-        <!-- BAGIAN 4: LINGKUNGAN & KONEKSI -->
         <div class="section-title">Status & Koneksi</div>
         <div class="info-row">
             <span class="label">Status Baterai</span>
@@ -160,76 +156,87 @@
     </div>
 
     <script>
-        // 1. Fungsi Membuat ID Unik Permanen di Browser
+        // 1. Fungsi UUID Aman
         function getOrCreateUUID() {
-            let uuid = localStorage.getItem('device_system_uuid');
-            if (!uuid) {
-                uuid = 'dev-' + 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-                    const r = Math.random() * 16 | 0;
-                    const v = c === 'x' ? r : (r & 0x3 | 0x8);
-                    return v.toString(16);
-                });
-                localStorage.setItem('device_system_uuid', uuid);
+            try {
+                let uuid = localStorage.getItem('device_system_uuid');
+                if (!uuid) {
+                    uuid = 'dev-' + 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                        const r = Math.random() * 16 | 0;
+                        const v = c === 'x' ? r : (r & 0x3 | 0x8);
+                        return v.toString(16);
+                    });
+                    localStorage.setItem('device_system_uuid', uuid);
+                }
+                return uuid;
+            } catch (e) {
+                return "dev-tidak-diizinkan-browser";
             }
-            return uuid;
         }
 
-        // 2. Fungsi Utama Deteksi Spesifikasi Lengkap
+        // 2. Fungsi Utama Deteksi (Dengan Pengaman Anti-Macet di setiap bagian)
         function jalankanDeteksiPerangkat() {
             const ua = navigator.userAgent;
-            let os = "Bukan Android / Desktop PC";
-            let model = "Tidak Diketahui";
 
             // Tampilkan UUID
             document.getElementById('device-uuid').innerText = getOrCreateUUID();
 
             // Deteksi OS & Model Dasar
-            if (/Android/i.test(ua)) {
-                const matchVersi = ua.match(/Android\s([0-9\.]+)/);
-                os = matchVersi ? `Android ${matchVersi[1]}` : "Android";
-                
-                const matchModel = ua.match(/Linux; Android[^;]+;\s([^)]+)/);
-                if (matchModel) {
-                    model = matchModel[1].split(' Build/')[0]; 
+            try {
+                let os = "Bukan Android / Desktop PC";
+                let model = "Tidak Diketahui";
+
+                if (/Android/i.test(ua)) {
+                    const matchVersi = ua.match(/Android\s([0-9\.]+)/);
+                    os = matchVersi ? `Android ${matchVersi[1]}` : "Android";
+                    
+                    const matchModel = ua.match(/Linux; Android[^;]+;\s([^)]+)/);
+                    if (matchModel) {
+                        model = matchModel[1].split(' Build/')[0]; 
+                    }
+                } else if (/iPhone|iPad|iPod/i.test(ua)) {
+                    os = "iOS";
+                    model = /iPhone/i.test(ua) ? "iPhone" : "iPad";
+                    document.getElementById('tipe-perangkat').innerText = "iOS Device";
+                } else if (/Windows/i.test(ua)) {
+                    os = "Windows OS";
+                    model = "Desktop PC / Laptop";
+                    document.getElementById('tipe-perangkat').innerText = "Komputer";
                 }
-            } else if (/iPhone|iPad|iPod/i.test(ua)) {
-                os = "iOS";
-                model = /iPhone/i.test(ua) ? "iPhone" : "iPad";
-                document.getElementById('tipe-perangkat').innerText = "iOS Device";
-            } else if (/Windows/i.test(ua)) {
-                os = "Windows OS";
-                model = "Desktop PC / Laptop";
-                document.getElementById('tipe-perangkat').innerText = "Komputer";
+                document.getElementById('model-perangkat').innerText = model;
+                document.getElementById('os-versi').innerText = os;
+            } catch (e) {
+                document.getElementById('model-perangkat').innerText = "Error membaca";
+                document.getElementById('os-versi').innerText = "Error membaca";
             }
 
-            document.getElementById('model-perangkat').innerText = model;
-            document.getElementById('os-versi').innerText = os;
-
-            // Deteksi Layar & Resolusi Asli Fisik HP
-            const lebarFisik = window.screen.width * window.devicePixelRatio;
-            const tinggiFisik = window.screen.height * window.devicePixelRatio;
-            document.getElementById('layar-resolusi').innerText = `${Math.round(lebarFisik)} x ${Math.round(tinggiFisik)} Pixels`;
-            document.getElementById('pixel-ratio').innerText = `${window.devicePixelRatio}x`;
-
-            // Deteksi Orientasi Default Layar
-            const orientasi = window.screen.width > window.screen.height ? "Landscape" : "Portrait (Smartphone)";
-            document.getElementById('orientasi-layar').innerText = orientasi;
-
-            // Deteksi Hardware CPU Core
-            if (navigator.hardwareConcurrency) {
-                document.getElementById('cpu-cores').innerText = `${navigator.hardwareConcurrency} Core / Threads`;
-            } else {
-                document.getElementById('cpu-cores').innerText = "Tidak Didukung";
+            // Deteksi Layar
+            try {
+                const dpr = window.devicePixelRatio || 1;
+                const lebarFisik = window.screen.width * dpr;
+                const tinggiFisik = window.screen.height * dpr;
+                document.getElementById('layar-resolusi').innerText = `${Math.round(lebarFisik)} x ${Math.round(tinggiFisik)} Pixels`;
+                document.getElementById('pixel-ratio').innerText = `${dpr}x`;
+                document.getElementById('orientasi-layar').innerText = window.screen.width > window.screen.height ? "Landscape" : "Portrait (Smartphone)";
+            } catch (e) {
+                document.getElementById('layar-resolusi').innerText = "Dibatasi";
             }
 
-            // Deteksi RAM Perangkat (Dibulatkan Browser untuk Keamanan Privasi)
-            if (navigator.deviceMemory) {
-                document.getElementById('ram-capacity').innerText = `± ${navigator.deviceMemory} GB`;
-            } else {
-                document.getElementById('ram-capacity').innerText = "Dibatasi Browser / iOS";
+            // Deteksi CPU Core
+            try {
+                document.getElementById('cpu-cores').innerText = navigator.hardwareConcurrency ? `${navigator.hardwareConcurrency} Core` : "Dibatasi";
+            } catch (e) {
+                document.getElementById('cpu-cores').innerText = "Dibatasi";
             }
 
-            // Deteksi GPU / Kartu Grafis Fisik Perangkat keras menggunakan WebGL
+            // Deteksi RAM
+            try {
+                document.getElementById('ram-capacity').innerText = navigator.deviceMemory ? `± ${navigator.deviceMemory} GB` : "Dibatasi Browser";
+            } catch (e) {
+                document.getElementById('ram-capacity').innerText = "Dibatasi Browser";
+            }
+
+            // Deteksi GPU (WebGl)
             try {
                 const canvas = document.createElement('canvas');
                 const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
@@ -238,7 +245,3 @@
                     if (debugInfo) {
                         const vendor = gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL);
                         const renderer = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
-                        
-                        // Bersihkan teks ANGLE jika ada pada browser chromium
-                        document.getElementById('gpu-vendor').innerText = vendor.replace(/Google Inc\.\s?/g, '');
-                        document.getElementById('gpu-renderer').innerText = renderer;
