@@ -3,33 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cek Perangkat</title>
+    <title>Cek Perangkat Pro</title>
     <style>
         body {
             font-family: sans-serif;
-            background-color: #0b132b;
+            background-color: #050b14;
             color: #ffffff;
             padding: 20px;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 90vh;
+            min-height: 95vh;
             margin: 0;
+            overflow-x: hidden;
+            position: relative;
         }
+        /* FITUR ANIMASI LATAR BELAKANG */
+        body::before {
+            content: "";
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(78,168,222,0.05) 0%, transparent 60%),
+                        radial-gradient(circle, rgba(100,223,223,0.03) 0%, transparent 40%);
+            animation: putarLatar 20s linear infinite;
+            z-index: -1;
+        }
+        @keyframes putarLatar {
+            0% { transform: translate(-25%, -25%) rotate(0deg); }
+            100% { transform: translate(-25%, -25%) rotate(360deg); }
+        }
+
         .card {
-            background-color: #1c2541;
-            padding: 20px;
-            border-radius: 10px;
+            background-color: rgba(28, 37, 65, 0.85);
+            backdrop-filter: blur(10px);
+            padding: 25px;
+            border-radius: 15px;
             width: 100%;
             max-width: 450px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+            border: 1px solid rgba(78, 168, 222, 0.2);
         }
         h2 {
             color: #4ea8de;
             border-bottom: 2px solid #3a506b;
             padding-bottom: 8px;
             margin-top: 0;
-            font-size: 1.1rem;
+            font-size: 1.2rem;
+            text-shadow: 0 0 10px rgba(78, 168, 222, 0.3);
+        }
+        .section-title {
+            font-size: 0.8rem;
+            color: #64dfdf;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 15px 0 8px 0;
+            font-weight: bold;
         }
         .baris {
             display: flex;
@@ -40,7 +69,32 @@
         .kiri { color: #a5a5a5; font-style: italic; }
         .kanan { font-weight: bold; color: #4ea8de; text-align: right; }
         
-        /* DESAIN GRUP TOMBOL BARU */
+        /* INDIKATOR SINYAL & SKOR */
+        .badge-status {
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: #050b14;
+            font-weight: bold;
+        }
+        .online { background-color: #06d6a0; }
+        .offline { background-color: #ff1654; color: #fff; }
+        
+        .skor-box {
+            background: linear-gradient(135deg, #1c2541, #3a506b);
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            margin-top: 15px;
+            border: 1px solid rgba(100, 223, 223, 0.3);
+        }
+        .skor-angka {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #64dfdf;
+            text-shadow: 0 0 15px rgba(100, 223, 223, 0.6);
+        }
+
         .btn-container {
             display: flex;
             flex-direction: column;
@@ -57,38 +111,12 @@
             border-radius: 6px;
             cursor: pointer;
             transition: all 0.2s ease;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 8px;
         }
-        /* Tombol Utama (Salin) */
-        .btn-primary {
-            background-color: #4ea8de;
-            color: #0b132b;
-        }
-        .btn-primary:hover {
-            background-color: #64dfdf;
-            box-shadow: 0 0 10px rgba(100, 223, 223, 0.4);
-        }
-        /* Tombol Sekunder (Kirim) */
-        .btn-secondary {
-            background-color: transparent;
-            color: #64dfdf;
-            border: 1px solid #64dfdf;
-        }
-        .btn-secondary:hover {
-            background-color: rgba(100, 223, 223, 0.1);
-        }
-        /* Tombol Refresh */
-        .btn-refresh {
-            background-color: #3a506b;
-            color: #ffffff;
-        }
-        .btn-refresh:hover {
-            background-color: #5c7494;
-        }
-        /* Notifikasi Sukses Kecil */
+        .btn-primary { background-color: #4ea8de; color: #0b132b; }
+        .btn-primary:hover { background-color: #64dfdf; box-shadow: 0 0 10px rgba(100, 223, 223, 0.4); }
+        .btn-refresh { background-color: #3a506b; color: #ffffff; }
+        .btn-refresh:hover { background-color: #5c7494; }
+        
         .toast {
             background-color: #06d6a0;
             color: #0b132b;
@@ -105,8 +133,15 @@
 <body>
 
     <div class="card">
-        <h2>📱 TENTANG PERANGKAT (TERBARU)</h2>
+        <h2>⚡ SPESIFIKASI SUPER DETEKSI</h2>
         
+        <div class="section-title">Koneksi & Sinyal</div>
+        <div class="baris">
+            <span class="kiri">Status Jaringan Internet</span>
+            <span id="status-internet" class="badge-status online">Mengecek...</span>
+        </div>
+
+        <div class="section-title">Sistem Utama</div>
         <div class="baris">
             <span class="kiri">Sistem Operasi / OS</span>
             <span class="kanan" id="os">Memuat...</span>
@@ -123,16 +158,18 @@
             <span class="kiri">Orientasi</span>
             <span class="kanan" id="orientasi">Memuat...</span>
         </div>
-        <div class="baris">
-            <span class="kiri">Data Mentah Browser</span>
-            <span class="kanan" id="mentah" style="font-size:0.75rem; font-weight:normal; word-break:break-all; color:#8ecae6;">Memuat...</span>
+
+        <!-- FITUR LIVE ESTIMASI SKOR PERFORMA -->
+        <div class="section-title">Uji Performa Browser</div>
+        <div class="skor-box">
+            <div style="font-size: 0.8rem; color: #a5a5a5; margin-bottom: 5px;">ESTIMASI SKOR HARDWARE</div>
+            <div class="skor-angka" id="skor-hp">Menghitung...</div>
+            <div style="font-size: 0.7rem; color: #06d6a0; margin-top: 3px;">Berdasarkan Kalkulasi FPS Kecepatan Render</div>
         </div>
 
-        <!-- FITUR TOMBOL INTERAKTIF -->
         <div class="btn-container">
-            <button class="btn btn-primary" onclick="salinInfo()">📋 Salin Info Perangkat</button>
-            <button class="btn btn-secondary" onclick="kirimData()">🚀 Kirim Data Ke Server</button>
-            <button class="btn btn-refresh" onclick="location.reload()">🔄 Segarkan Halaman</button>
+            <button class="btn btn-primary" onclick="salinInfo()">📋 Salin Semua Info</button>
+            <button class="btn btn-refresh" onclick="location.reload()">🔄 Tes Ulang Sistem</button>
         </div>
         
         <div id="notif-toast" class="toast">Berhasil disalin ke papan klip!</div>
@@ -147,80 +184,74 @@
             if (ua.indexOf("Android") !== -1) {
                 osInfo = "Android";
                 var matchVersi = ua.match(/Android\s([0-9\.]+)/);
-                if (matchVersi) {
-                    osInfo = "Android " + matchVersi[1];
-                }
+                if (matchVersi) { osInfo = "Android " + matchVersi; }
                 modelInfo = "Perangkat Android (K)";
             } else if (ua.indexOf("iPhone") !== -1) {
-                osInfo = "iOS";
-                modelInfo = "iPhone";
+                osInfo = "iOS"; modelInfo = "iPhone";
             }
 
             document.getElementById("os").innerHTML = osInfo;
             document.getElementById("model").innerHTML = modelInfo;
             document.getElementById("layar").innerHTML = Math.round(window.screen.width * window.devicePixelRatio) + " x " + Math.round(window.screen.height * window.devicePixelRatio) + " px";
             document.getElementById("orientasi").innerHTML = window.screen.width > window.screen.height ? "Landscape" : "Portrait";
-            document.getElementById("mentah").innerHTML = ua;
 
             if (navigator.userAgentData && navigator.userAgentData.getHighEntropyValues) {
                 navigator.userAgentData.getHighEntropyValues(["model", "platformVersion"])
                     .then(function(hints) {
-                        if (hints.model) {
-                            document.getElementById("model").innerHTML = hints.model;
-                        }
+                        if (hints.model) { document.getElementById("model").innerHTML = hints.model; }
                         if (hints.platformVersion && osInfo.indexOf("Android") !== -1) {
-                            var versiUtama = hints.platformVersion.split(".")[0];
-                            if(parseInt(versiUtama) >= 10) {
-                                document.getElementById("os").innerHTML = "Android " + versiUtama;
-                            }
+                            var versiUtama = hints.platformVersion.split(".");
+                            if(parseInt(versiUtama) >= 10) { document.getElementById("os").innerHTML = "Android " + versiUtama; }
                         }
                     })
-                    .catch(function(err) {
-                        ekstrakAlternatif(ua);
-                    });
+                    .catch(function() { ekstrakAlternatif(ua); });
             } else {
                 ekstrakAlternatif(ua);
             }
 
             function ekstrakAlternatif(teksUa) {
                 var matchKurung = teksUa.match(/\(([^)]+)\)/);
-                if (matchKurung && matchKurung[1]) {
-                    var bagianData = matchKurung[1].split("; ");
+                if (matchKurung) {
+                    var bagianData = matchKurung.split("; ");
                     document.getElementById("model").innerHTML = bagianData[bagianData.length - 1];
                 }
             }
+
+            // FITUR INTERNET MONITOR (REAL-TIME)
+            function updateStatusKoneksi() {
+                var statusBox = document.getElementById("status-internet");
+                if (navigator.onLine) {
+                    statusBox.innerHTML = "ONLINE / LANCAR";
+                    statusBox.className = "badge-status online";
+                } else {
+                    statusBox.innerHTML = "OFFLINE / TERPUTUS";
+                    statusBox.className = "badge-status offline";
+                }
+            }
+            window.addEventListener('online', updateStatusKoneksi);
+            window.addEventListener('offline', updateStatusKoneksi);
+            updateStatusKoneksi();
+
+            // FITUR HITUNG BENCHMARK RENDER (SIMULASI SKOR)
+            var start = performance.now();
+            var frames = 0;
+            function hitungSkorPerforma() {
+                frames++;
+                var waktuSkini = performance.now();
+                if (waktuSkini - start >= 500) { 
+                    var kalkulasiSkor = Math.round((frames * 60) + (window.devicePixelRatio * 250));
+                    // Bonus poin jika core CPU terdeteksi banyak
+                    if(navigator.hardwareConcurrency) { kalkulasiSkor += (navigator.hardwareConcurrency * 150); }
+                    document.getElementById("skor-hp").innerHTML = kalkulasiSkor + " PTS";
+                } else {
+                    requestAnimationFrame(hitungSkorPerforma);
+                }
+            }
+            requestAnimationFrame(hitungSkorPerforma);
 
         } catch (error) {
             alert("Terjadi masalah: " + error.message);
         }
 
-        // FUNGSI JAVASCRIPT UNTUK TOMBOL SALIN
         function salinInfo() {
             var txtOs = document.getElementById("os").innerText;
-            var txtModel = document.getElementById("model").innerText;
-            var txtLayar = document.getElementById("layar").innerText;
-            var txtOrientasi = document.getElementById("orientasi").innerText;
-
-            var teksLengkap = "--- INFO PERANGKAT ---\n" +
-                              "OS: " + txtOs + "\n" +
-                              "Model: " + txtModel + "\n" +
-                              "Resolusi: " + txtLayar + "\n" +
-                              "Orientasi: " + txtOrientasi;
-
-            navigator.clipboard.writeText(teksLengkap).then(function() {
-                var toast = document.getElementById("notif-toast");
-                toast.style.display = "block";
-                setTimeout(function() {
-                    toast.style.display = "none";
-                }, 2500);
-            });
-        }
-
-        // FUNGSI JAVASCRIPT UNTUK SIMULASI TOMBOL KIRIM
-        function kirimData() {
-            alert("Simulasi Berhasil! Data perangkat Anda (" + document.getElementById("model").innerText + ") siap dikirimkan ke database.");
-        }
-    </script>
-
-</body>
-</html>
